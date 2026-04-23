@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TOKEN-IGNITION</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Noto+Sans+Mono:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./assets/styles.css" />
+  </head>
+  <body>
+    <canvas id="topology" aria-hidden="true"></canvas>
+
+    <header class="topbar">
+      <div class="topbar-left" data-i18n="brand"></div>
+      <div class="topbar-right">
+        <button
+          class="lang-btn"
+          data-lang="en"
+          aria-label="Switch to English"
+        >
+          EN
+        </button>
+        <span class="sep">/</span>
+        <button
+          class="lang-btn"
+          data-lang="zh"
+          aria-label="切换为中文"
+        >
+          中文
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <!-- HERO -->
+      <section class="hero">
+        <pre id="ascii-art" class="ascii-art" aria-hidden="true"></pre>
+
+        <div class="hero-text">
+          <h1 class="title">TOKEN-IGNITION</h1>
+          <p class="subtitle" data-i18n="heroSubtitle"></p>
+          <p class="hook" data-i18n="heroHook"></p>
+          <p class="tagline" data-i18n="heroTagline"></p>
+          <a href="#submit" class="cta" data-i18n="heroCTA"></a>
+          <div class="scroll-hint" data-i18n="scrollHint"></div>
+        </div>
+      </section>
+
+      <!-- MANIFESTO -->
+      <section id="manifesto" class="section">
+        <div class="section-meta">
+          <span class="section-num">01</span>
+          <span class="section-label" data-i18n="manifestoLabel"></span>
+        </div>
+        <h2 class="section-title" data-i18n="manifestoTitle"></h2>
+        <div class="prose" data-i18n="manifestoBody"></div>
+      </section>
+
+      <!-- PROTOCOL -->
+      <section id="protocol" class="section">
+        <div class="section-meta">
+          <span class="section-num">02</span>
+          <span class="section-label" data-i18n="protocolLabel"></span>
+        </div>
+        <h2 class="section-title" data-i18n="protocolTitle"></h2>
+        <ol id="protocol-list" class="kv-list"></ol>
+      </section>
+
+      <!-- RULES -->
+      <section id="rules" class="section">
+        <div class="section-meta">
+          <span class="section-num">03</span>
+          <span class="section-label" data-i18n="rulesLabel"></span>
+        </div>
+        <h2 class="section-title" data-i18n="rulesTitle"></h2>
+        <ol id="rules-list" class="rule-list"></ol>
+
+        <div class="callout">
+          <div class="callout-head" data-i18n="rulesCalloutHead"></div>
+          <div class="callout-body" data-i18n="rulesCalloutBody"></div>
+        </div>
+      </section>
+
+      <!-- ALLOCATION -->
+      <section id="allocation" class="section">
+        <div class="section-meta">
+          <span class="section-num">04</span>
+          <span class="section-label" data-i18n="allocationLabel"></span>
+        </div>
+        <h2 class="section-title" data-i18n="allocationTitle"></h2>
+        <div class="allocation-grid">
+          <div class="allocation-cell">
+            <div class="allocation-key">gate.1</div>
+            <div class="allocation-value">1M</div>
+            <div class="allocation-note" data-i18n="allocation1Note"></div>
+          </div>
+          <div class="allocation-cell">
+            <div class="allocation-key">gate.2</div>
+            <div class="allocation-value">10M</div>
+            <div class="allocation-note" data-i18n="allocation2Note"></div>
+          </div>
+          <div class="allocation-cell">
+            <div class="allocation-key">gate.3</div>
+            <div class="allocation-value">100M</div>
+            <div class="allocation-note" data-i18n="allocation3Note"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SUBMIT -->
+      <section id="submit" class="section submit-section">
+        <div class="section-meta">
+          <span class="section-num">05</span>
+          <span class="section-label" data-i18n="submitLabel"></span>
+        </div>
+        <h2 class="section-title" data-i18n="submitTitle"></h2>
+        <p class="submit-intro" data-i18n="submitIntro"></p>
+
+        <form id="submit-form" class="submit-form" novalidate>
+          <div class="field">
+            <label class="field-label" for="f-task">
+              <span class="field-index">[1/5]</span>
+              <span data-i18n="field1Label"></span>
+            </label>
+            <div class="field-hint" data-i18n="field1Hint"></div>
+            <textarea
+              id="f-task"
+              name="task"
+              rows="5"
+              maxlength="2000"
+              required
+              data-i18n-ph="field1Ph"
+            ></textarea>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="f-criterion">
+              <span class="field-index">[2/5]</span>
+              <span data-i18n="field2Label"></span>
+            </label>
+            <div class="field-hint" data-i18n="field2Hint"></div>
+            <textarea
+              id="f-criterion"
+              name="criterion"
+              rows="4"
+              maxlength="1500"
+              required
+              data-i18n-ph="field2Ph"
+            ></textarea>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="f-plan">
+              <span class="field-index">[3/5]</span>
+              <span data-i18n="field3Label"></span>
+            </label>
+            <div class="field-hint" data-i18n="field3Hint"></div>
+            <textarea
+              id="f-plan"
+              name="plan"
+              rows="8"
+              maxlength="4000"
+              required
+              data-i18n-ph="field3Ph"
+            ></textarea>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="f-endpoint">
+              <span class="field-index">[4/5]</span>
+              <span data-i18n="field4Label"></span>
+            </label>
+            <div class="field-hint" data-i18n="field4Hint"></div>
+            <input
+              id="f-endpoint"
+              name="endpoint"
+              type="url"
+              maxlength="500"
+              required
+              data-i18n-ph="field4Ph"
+            />
+            <div class="field-sub">
+              <label class="field-sub-label" for="f-artifact" data-i18n="field4Artifact"></label>
+              <input
+                id="f-artifact"
+                name="artifact"
+                type="file"
+                accept=".txt,.md,.json,.log,.yaml,.yml,.jsonl,.csv"
+              />
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="f-contact">
+              <span class="field-index">[5/5]</span>
+              <span data-i18n="field5Label"></span>
+            </label>
+            <div class="field-hint" data-i18n="field5Hint"></div>
+            <input
+              id="f-contact"
+              name="contact"
+              type="text"
+              maxlength="200"
+              required
+              data-i18n-ph="field5Ph"
+            />
+          </div>
+
+          <div class="field consent">
+            <label>
+              <input id="f-consent" type="checkbox" required />
+              <span data-i18n="consent"></span>
+            </label>
+          </div>
+
+          <div class="submit-row">
+            <button type="submit" class="submit-btn">
+              <span class="submit-sigil">&gt;</span>
+              <span data-i18n="submitButton"></span>
+              <span class="cursor-static">_</span>
+            </button>
+          </div>
+
+          <div id="submit-feedback" class="submit-feedback" aria-live="polite"></div>
+        </form>
+      </section>
+
+      <!-- LEDGER -->
+      <section id="ledger" class="section">
+        <div class="section-meta">
+          <span class="section-num">06</span>
+          <span class="section-label" data-i18n="ledgerLabel"></span>
+        </div>
+        <h2 class="section-title" data-i18n="ledgerTitle"></h2>
+        <p class="ledger-intro" data-i18n="ledgerIntro"></p>
+        <div class="ledger-table" id="ledger-table" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-row">
+        <span data-i18n="footLeft"></span>
+        <span data-i18n="footRight"></span>
+      </div>
+    </footer>
+
+    <script src="./assets/app.js" defer></script>
+  </body>
+</html>
