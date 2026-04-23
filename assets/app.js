@@ -483,28 +483,18 @@
      -------------------------------------------------------------- */
 
   function renderLedger() {
+    // The live ledger panel is owned by ledger.js (pulls from the public
+    // ledger repo). If that script has taken over (data-live=1) we do
+    // nothing. Otherwise we render a neutral placeholder — never the old
+    // localStorage mock, which would mislead real users.
     const el = document.getElementById("ledger-table");
     if (!el) return;
-    const stored = JSON.parse(localStorage.getItem("ti.ledger") || "[]");
-    // seed with some placeholders if empty, for visual context
-    const seed = stored.length
-      ? stored
-      : [
-          { hash: "0x9ac7…1fe3", time: "T-0h", status: "pending" },
-          { hash: "0x4b21…a0cd", time: "T-2h", status: "advanced" },
-          { hash: "0xf3ab…77e1", time: "T-11h", status: "rejected" },
-          { hash: "0x0017…b4d2", time: "T-26h", status: "ignited" },
-        ];
-    el.innerHTML = seed
-      .map(
-        (r) =>
-          `<div class="ledger-row">
-             <div class="hash">${escapeHtml(r.hash)}</div>
-             <div class="time">${escapeHtml(r.time)}</div>
-             <div class="status ${escapeHtml(r.status)}">${escapeHtml(r.status.toUpperCase())}</div>
-           </div>`
-      )
-      .join("");
+    if (el.dataset.live === "1") return;
+    el.innerHTML =
+      '<div class="ledger-row">' +
+      '<div class="hash">—</div>' +
+      '<div class="time">ledger loading</div>' +
+      '<div class="status">—</div></div>';
   }
 
   /* --------------------------------------------------------------
@@ -527,7 +517,7 @@
     if (!form) return;
     const fb = document.getElementById("submit-feedback");
 
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const t = I18N[LANG];
 
@@ -553,26 +543,39 @@
         return;
       }
 
-      const payload = JSON.stringify({
-        task,
-        criterion,
-        plan,
-        endpoint,
-        contact,
-        ts: Date.now(),
-      });
-      const h = hashString(payload);
-
-      // store locally so ledger visibly updates
-      const ledger = JSON.parse(localStorage.getItem("ti.ledger") || "[]");
-      ledger.unshift({ hash: h, time: "T-0h", status: "pending" });
-      localStorage.setItem("ti.ledger", JSON.stringify(ledger.slice(0, 8)));
-      renderLedger();
-
+      // submitting state
       fb.className = "submit-feedback visible";
-      fb.textContent = t.feedback.ok(h);
+      fb.textContent = "> submitting to audit queue…";
+      const btn = form.querySelector(".submit-btn");
+      if (btn) btn.setAttribute("disabled", "true");
 
-      form.reset();
+      try {
+        const resp = await fetch("/api/submit", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ task, criterion, plan, endpoint, contact }),
+        });
+        const data = await resp.json().catch(() => ({}));
+
+        if (!resp.ok || !data.ok) {
+          fb.className = "submit-feedback visible error";
+          fb.textContent = "[reject] " + (data.error || `http ${resp.status}`);
+          return;
+        }
+
+        const shortHash =
+          "0x" + String(data.submission_id || "").padEnd(12, "·").slice(0, 4) +
+          "…" + String(data.submission_id || "").slice(-4);
+
+        fb.className = "submit-feedback visible";
+        fb.textContent = t.feedback.ok(shortHash);
+        form.reset();
+      } catch (err) {
+        fb.className = "submit-feedback visible error";
+        fb.textContent = "[network] " + (err && err.message ? err.message : "unreachable");
+      } finally {
+        if (btn) btn.removeAttribute("disabled");
+      }
     });
   }
 
