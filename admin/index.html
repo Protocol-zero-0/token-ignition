@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>TOKEN-IGNITION · admin</title>
+    <link rel="stylesheet" href="./admin.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section id="login" class="login">
+        <h1>TOKEN-IGNITION / admin</h1>
+        <form id="login-form">
+          <input id="token" type="password" placeholder="ADMIN_TOKEN" autocomplete="current-password" />
+          <button type="submit">enter</button>
+        </form>
+        <p id="login-error" class="error"></p>
+      </section>
+
+      <section id="app" hidden>
+        <header class="top">
+          <div>
+            <h1>Mission Control</h1>
+            <p>Submission intake, candidate detail, and manual gate status.</p>
+          </div>
+          <button id="refresh">refresh</button>
+        </header>
+        <div class="filters">
+          <button data-status="all" class="active">all</button>
+          <button data-status="pending">pending</button>
+          <button data-status="admitted">admitted</button>
+          <button data-status="verified">verified</button>
+          <button data-status="ignited">ignited</button>
+          <button data-status="rejected">rejected</button>
+        </div>
+        <div id="count" class="count">-</div>
+        <div id="list" class="list"></div>
+      </section>
+    </main>
+    <script src="./admin.js" defer></script>
+  </body>
+</html>

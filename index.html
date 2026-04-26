@@ -125,7 +125,7 @@
         <form id="submit-form" class="submit-form" novalidate>
           <div class="field">
             <label class="field-label" for="f-task">
-              <span class="field-index">[1/5]</span>
+              <span class="field-index">[1/7]</span>
               <span data-i18n="field1Label"></span>
             </label>
             <div class="field-hint" data-i18n="field1Hint"></div>
@@ -141,7 +141,7 @@
 
           <div class="field">
             <label class="field-label" for="f-criterion">
-              <span class="field-index">[2/5]</span>
+              <span class="field-index">[2/7]</span>
               <span data-i18n="field2Label"></span>
             </label>
             <div class="field-hint" data-i18n="field2Hint"></div>
@@ -156,59 +156,76 @@
           </div>
 
           <div class="field">
-            <label class="field-label" for="f-plan">
-              <span class="field-index">[3/5]</span>
+            <label class="field-label">
+              <span class="field-index">[3/7]</span>
               <span data-i18n="field3Label"></span>
             </label>
             <div class="field-hint" data-i18n="field3Hint"></div>
+            <div class="axis-group">
+              <label><input type="checkbox" name="axis" value="behavior" /> <span data-i18n="field3OptBehavior"></span></label>
+              <label><input type="checkbox" name="axis" value="knowledge" /> <span data-i18n="field3OptKnowledge"></span></label>
+              <label><input type="checkbox" name="axis" value="scaffold" /> <span data-i18n="field3OptScaffold"></span></label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="f-plan">
+              <span class="field-index">[4/7]</span>
+              <span data-i18n="field4Label"></span>
+            </label>
+            <div class="field-hint" data-i18n="field4Hint"></div>
             <textarea
               id="f-plan"
               name="plan"
               rows="8"
               maxlength="4000"
               required
-              data-i18n-ph="field3Ph"
+              data-i18n-ph="field4Ph"
             ></textarea>
           </div>
 
           <div class="field">
             <label class="field-label" for="f-endpoint">
-              <span class="field-index">[4/5]</span>
-              <span data-i18n="field4Label"></span>
+              <span class="field-index">[5/7]</span>
+              <span data-i18n="field5Label"></span>
             </label>
-            <div class="field-hint" data-i18n="field4Hint"></div>
+            <div class="field-hint" data-i18n="field5Hint"></div>
             <input
               id="f-endpoint"
               name="endpoint"
               type="url"
               maxlength="500"
               required
-              data-i18n-ph="field4Ph"
+              data-i18n-ph="field5Ph"
             />
-            <div class="field-sub">
-              <label class="field-sub-label" for="f-artifact" data-i18n="field4Artifact"></label>
-              <input
-                id="f-artifact"
-                name="artifact"
-                type="file"
-                accept=".txt,.md,.json,.log,.yaml,.yml,.jsonl,.csv"
-              />
-            </div>
+            <label class="field-sub-label" for="f-repo" data-i18n="field5Repo"></label>
+            <input id="f-repo" name="repo" type="url" maxlength="500" required data-i18n-ph="field5RepoPh" />
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="f-baseline">
+              <span class="field-index">[6/7]</span>
+              <span data-i18n="field6Label"></span>
+            </label>
+            <div class="field-hint" data-i18n="field6Hint"></div>
+            <input id="f-baseline" name="baselineEndpoint" type="url" maxlength="500" required data-i18n-ph="field6Ph" />
+            <label class="field-sub-label" for="f-baseline-repo" data-i18n="field6Repo"></label>
+            <input id="f-baseline-repo" name="baselineRepo" type="url" maxlength="500" required data-i18n-ph="field6RepoPh" />
           </div>
 
           <div class="field">
             <label class="field-label" for="f-contact">
-              <span class="field-index">[5/5]</span>
-              <span data-i18n="field5Label"></span>
+              <span class="field-index">[7/7]</span>
+              <span data-i18n="field7Label"></span>
             </label>
-            <div class="field-hint" data-i18n="field5Hint"></div>
+            <div class="field-hint" data-i18n="field7Hint"></div>
             <input
               id="f-contact"
               name="contact"
               type="text"
               maxlength="200"
               required
-              data-i18n-ph="field5Ph"
+              data-i18n-ph="field7Ph"
             />
           </div>
 
@@ -254,7 +271,7 @@
     <script
       src="./assets/ledger.js"
       defer
-      data-ledger-repo="billion-token-one-task/token-ignition-ledger"
+      data-ledger-repo="Protocol-zero-0/token-ignition-ledger"
       data-branch="main"
       data-poll-seconds="10"
       data-show-recent="10"

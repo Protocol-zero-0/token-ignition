@@ -18,31 +18,30 @@
     en: {
       brand: "TOKEN-IGNITION // RESEARCH SELECTION",
 
-      heroSubtitle: "A selection gate for AI-native researchers",
-      heroHook: "The task is the interview. Pass it, and you join the research.",
+      heroSubtitle: "The entry gate to the Ladder Plan",
+      heroHook: "Token is to cognition what joule is to energy. The bottleneck is no longer the model. It is architecture.",
       heroTagline:
-        "You define the task. You build the system. The system must evolve itself. If it clears the AI-audited gate, you're invited into the research group. Tokens are how we make that possible — not why we do it.",
+        "We are looking for people who can bind 10^9-10^12 tokens to one complex goal. Submit a scaffold that evolves itself, beats its own ablation, and turns larger token budgets into reliable cognitive work.",
       heroCTA: "↓  enter the gate",
       scrollHint: "scroll to read how selection works",
 
       manifestoLabel: "manifesto",
-      manifestoTitle: "HOW WE SELECT",
+      manifestoTitle: "THE LADDER PLAN",
       manifestoBody: `
-        <p>Hiring in frontier AI is broken. The legible names get the interviews, the compute, the role. The people who would actually have moved the field rarely pass the filters.</p>
-        <p class="dim">CVs measure legibility, not ability. Pitch decks measure articulation, not craft. Interviews measure composure under pressure. None of these measure whether you can build a system that evolves itself.</p>
-        <p>So we inverted the interview. Give us a task you defined, and a system you built. If the system can clear the AI-audited gate by evolving itself, you're in the research group.</p>
-        <p class="dim">No CVs. No pitch decks. No intro calls. The artifact is the application. Passing is the offer.</p>
+        <p>Most AI agents still operate around 10^4-10^6 tokens. The Ladder Plan studies how to constrain 10^9-10^12 tokens toward a single complex objective: weeks or months of ordered execution with minimal human intervention, verification, and rollback.</p>
+        <p class="dim">Token-Ignition is the selection gate for that work. We do not screen for legibility. We ask for an artifact: a scaffold that can evolve across runs and prove its delta against a minimal ablation.</p>
       `,
 
       protocolLabel: "protocol",
       protocolTitle: "META-RULES",
       protocolItems: [
-        ["R1", "You define the task. The task must require a system that evolves itself."],
+        ["R1", "You define a long-horizon task that requires a scaffold, not a one-shot prompt."],
         ["R2", "You define the evaluation criterion. It must be reproducible and machine-verifiable."],
-        ["R3", "You build the system. The system — not you — produces the final output."],
+        ["R3", "You build the scaffold. The scaffold — not you — produces the final output."],
         ["R4", "All submissions are AI-judged. Human audit is random and post-hoc."],
         ["R5", "Identity is irrelevant. Submissions are accepted under pseudonym."],
         ["R6", "Selection is gated. Pass a gate, unlock more resources. Pass the final gate, join the research."],
+        ["R7", "Ablation is required: same model, same task, minimal scaffold. The delta is the evidence."],
       ],
 
       rulesLabel: "submission requirements",
@@ -93,7 +92,7 @@
       submitLabel: "submission",
       submitTitle: "APPLY BY SUBMITTING",
       submitIntro:
-        "Five fields. No account. Your entry is hashed and appended to a public ledger. AI audit starts within 24h. Clear the final gate and we reach out to talk about joining the research.",
+        "Seven fields. No account. Your entry is hashed and appended to a public ledger. Review starts from pending and can advance through the gates.",
       field1Label: "task.definition",
       field1Hint:
         "What does the system have to do? One paragraph. Must be testable.",
@@ -104,24 +103,31 @@
         "How will an AI auditor know you passed? Give the exact check.",
       field2Ph:
         "e.g. Auditor fetches /benchmark → receives JSON { inputs[], outputs[] }. Passes if L2 error < 0.01 on all held-out inputs and compression ratio > 8x.",
-      field3Label: "execution.plan",
-      field3Hint:
-        "How does the system evolve itself? What loop, what signal, what memory?",
-      field3Ph:
-        "Describe the self-modification loop — what the system observes, how it updates itself, how it decides to stop. Write as you would write it to a peer reviewer, not to a VC.",
-      field4Label: "live.endpoint",
-      field4Hint:
-        "A URL an AI can hit right now and get a machine-readable result.",
-      field4Ph: "https://…",
-      field4Artifact:
-        "attach run log (optional, ≤1MB, txt/md/json/log/yaml/jsonl/csv)",
-      field5Label: "contact.handle",
-      field5Hint:
+      field3Label: "evolution.axes",
+      field3Hint: "Which axis changes across runs without human edits? Scaffold-level evolution carries the highest weight.",
+      field3OptBehavior: "behavior",
+      field3OptKnowledge: "knowledge",
+      field3OptScaffold: "scaffold",
+      field4Label: "execution.plan",
+      field4Hint: "How does the scaffold evolve itself? What loop, signal, memory, or toolchain changes?",
+      field4Ph: "Describe what the scaffold observes, how it updates itself, how it decides to stop, and what is different in the next run.",
+      field5Label: "scaffold.artifact",
+      field5Hint: "A live endpoint an AI can hit now, plus a public GitHub repository.",
+      field5Ph: "https://…/benchmark",
+      field5Repo: "scaffold.repo",
+      field5RepoPh: "https://github.com/owner/scaffold",
+      field6Label: "ablation.artifact",
+      field6Hint: "Same model, same task, minimal scaffold. This is how we measure the delta.",
+      field6Ph: "https://…/baseline",
+      field6Repo: "ablation.repo",
+      field6RepoPh: "https://github.com/owner/baseline",
+      field7Label: "contact.handle",
+      field7Hint:
         "A pseudonym is fine. We only use it to notify you when a gate opens.",
-      field5Ph: "e.g. @handle on X, discord username, or email",
+      field7Ph: "e.g. @handle on X, discord username, or email",
 
       consent:
-        "I confirm my submission is my own work, the endpoint is live, and I accept AI-judged, non-negotiable evaluation.",
+        "I confirm my submission is my own work, both endpoints are live, and I accept AI-judged, non-negotiable evaluation.",
       submitButton: "submit",
 
       footLeft: "TOKEN-IGNITION  //  RESEARCH SELECTION  //  v0.1",
@@ -134,8 +140,12 @@
 
       feedback: {
         missing: "[reject] missing required fields. check highlighted items.",
+        noAxis: "[reject] evolution.axes must have at least one selected.",
         badUrl:
-          "[reject] live.endpoint must be a valid URL — our auditor has to crawl it.",
+          "[reject] scaffold endpoint must be a valid URL — our auditor has to crawl it.",
+        badBaseline: "[reject] ablation endpoint must be a valid URL.",
+        badRepo: "[reject] scaffold.repo must be a public github.com URL.",
+        badBaselineRepo: "[reject] ablation.repo must be a public github.com URL.",
         ok: (hash) =>
           `[accept] entry ${hash} queued.\nAI audit window: 24h.\nYou will not receive a confirmation email. Watch the ledger.`,
       },
@@ -144,31 +154,30 @@
     zh: {
       brand: "TOKEN-IGNITION // 研究员筛选",
 
-      heroSubtitle: "面向 AI 原生研究员的筛选入口",
-      heroHook: "任务本身就是申请书。通过了,就进研究组。",
+      heroSubtitle: "天梯计划的入口",
+      heroHook: "Token 之于认知,正如焦耳之于能量。瓶颈不再只是模型,而是架构。",
       heroTagline:
-        "你定义任务。你构建系统。系统必须自我进化。通过 AI 审计的门槛后,你会被邀请进入研究组。token 只是我们让这件事成为可能的方式,不是它的目的。",
+        "我们在寻找能把 10^9-10^12 量级 Token 约束到单一复杂目标上的人。提交一个会自我进化的脚手架,证明它能打过自己的消融基线,把更大 Token 预算转化为可靠的认知工作。",
       heroCTA: "↓  进入申请",
       scrollHint: "向下滚动,了解筛选机制",
 
       manifestoLabel: "宣言",
-      manifestoTitle: "我们怎么选人",
+      manifestoTitle: "天梯计划",
       manifestoBody: `
-        <p>前沿 AI 领域的招聘机制是坏的。能被看见的名字拿到面试、拿到算力、拿到位置。真正可能推动这个行业的人,往往过不了筛子。</p>
-        <p class="dim">简历衡量的是可读性,不是能力。Pitch 衡量的是表达,不是手艺。面试衡量的是临场镇定。没有一项,真正衡量你能不能造出一个会自我进化的系统。</p>
-        <p>所以我们把面试反过来。你给我们一个你自己定义的任务,和一个你自己造的系统。如果这个系统能靠自我进化通过 AI 审计,你就进入研究组。</p>
-        <p class="dim">不看简历。不看 pitch。不做 intro call。作品本身就是申请。通过,就是 offer。</p>
+        <p>绝大多数 AI Agent 仍运行在 10^4-10^6 Token 量级。天梯计划研究如何把 10^9-10^12 量级 Token 有效约束于单一复杂目标:数周、数月、极少人工干预、可验证、可回滚的有序执行。</p>
+        <p class="dim">Token-Ignition 是进入这项工作的筛选门。我们不筛选简历的可读性,我们筛选产物:一个能跨运行自我进化,并能相对最小消融基线证明增量的脚手架。</p>
       `,
 
       protocolLabel: "协议",
       protocolTitle: "元规则",
       protocolItems: [
-        ["R1", "你定义任务。该任务必须要求一个会自我进化的系统来完成。"],
+        ["R1", "你定义一个长跨度任务。它必须要求脚手架,而不是一次性 prompt。"],
         ["R2", "你定义评估标准。标准必须可复现、可被机器验证。"],
-        ["R3", "你构建系统。最终产出来自系统,不是来自你。"],
+        ["R3", "你构建脚手架。最终产出来自脚手架,不是来自你。"],
         ["R4", "所有提交由 AI 评判。人工审计是随机抽查,事后进行。"],
         ["R5", "身份无关。允许使用化名提交。"],
         ["R6", "筛选分档。通过一档,解锁更多资源;通过最终档,进入研究组。"],
+        ["R7", "必须提供消融对照:同模型、同任务、最小脚手架。差值即证据。"],
       ],
 
       rulesLabel: "提交要求",
@@ -219,7 +228,7 @@
       submitLabel: "申请",
       submitTitle: "提交即申请",
       submitIntro:
-        "五个字段。不用注册账号。提交会被哈希后写入公开账本,AI 审计将在 24 小时内开始。通过最终门槛,我们会主动联系你,谈加入研究组的事。",
+        "七个字段。不用注册账号。提交会被哈希后写入公开账本,先进入 pending,再沿着门槛推进。",
       field1Label: "task.definition",
       field1Hint: "系统要做什么?一段话。必须可测试。",
       field1Ph:
@@ -228,21 +237,31 @@
       field2Hint: "AI 审计怎么判断你通过了?给出确切的校验方式。",
       field2Ph:
         "例:审计器访问 /benchmark → 返回 JSON { inputs[], outputs[] }。若在全部留出输入上 L2 误差 < 0.01 且压缩比 > 8x,即为通过。",
-      field3Label: "execution.plan",
-      field3Hint: "系统如何自我进化?哪条循环、哪个信号、哪块记忆?",
-      field3Ph:
-        "描述自我修改的循环——系统观察什么,如何更新自身,如何判断停止。写给同行,不是写给投资人。",
-      field4Label: "live.endpoint",
-      field4Hint: "一个现在就能被 AI 访问、拿到机器可读结果的 URL。",
-      field4Ph: "https://…",
-      field4Artifact:
-        "附运行日志(可选,≤1MB,支持 txt/md/json/log/yaml/jsonl/csv)",
-      field5Label: "contact.handle",
-      field5Hint: "化名也可以。仅用于在门槛解锁时通知你。",
-      field5Ph: "例:X 上的 @handle、Discord 用户名或邮箱",
+      field3Label: "evolution.axes",
+      field3Hint: "你的脚手架在哪条轴上跨运行改变?脚手架层级的自我修改权重最高。",
+      field3OptBehavior: "行为",
+      field3OptKnowledge: "知识",
+      field3OptScaffold: "脚手架",
+      field4Label: "execution.plan",
+      field4Hint: "脚手架如何自我进化?循环、信号、记忆、工具链分别如何变化?",
+      field4Ph:
+        "描述脚手架观察什么、如何更新自己、如何停止,以及下一次运行具体哪里不同。",
+      field5Label: "scaffold.artifact",
+      field5Hint: "一个 AI 现在就能访问的端点,加一个公开 GitHub 仓库。",
+      field5Ph: "https://…/benchmark",
+      field5Repo: "scaffold.repo",
+      field5RepoPh: "https://github.com/owner/scaffold",
+      field6Label: "ablation.artifact",
+      field6Hint: "同模型、同任务、最小脚手架。我们用它衡量你的增量。",
+      field6Ph: "https://…/baseline",
+      field6Repo: "ablation.repo",
+      field6RepoPh: "https://github.com/owner/baseline",
+      field7Label: "contact.handle",
+      field7Hint: "化名也可以。仅用于在门槛解锁时通知你。",
+      field7Ph: "例:X 上的 @handle、Discord 用户名或邮箱",
 
       consent:
-        "我确认这是我本人的作品,端点当前可访问,并接受由 AI 评判、不可申诉的评估结果。",
+        "我确认这是我本人的作品,两个端点当前可访问,并接受由 AI 评判、不可申诉的评估结果。",
       submitButton: "提交",
 
       footLeft: "TOKEN-IGNITION  //  研究员筛选  //  v0.1",
@@ -254,7 +273,11 @@
 
       feedback: {
         missing: "[reject] 必填字段缺失。请检查标红项。",
-        badUrl: "[reject] live.endpoint 必须是有效 URL——审计器需要抓取它。",
+        noAxis: "[reject] evolution.axes 至少选择一项。",
+        badUrl: "[reject] scaffold endpoint 必须是有效 URL——审计器需要抓取它。",
+        badBaseline: "[reject] ablation endpoint 必须是有效 URL。",
+        badRepo: "[reject] scaffold.repo 必须是公开 GitHub URL。",
+        badBaselineRepo: "[reject] ablation.repo 必须是公开 GitHub URL。",
         ok: (hash) =>
           `[accept] 条目 ${hash} 已入队。\nAI 审计窗口:24 小时。\n我们不会发确认邮件,请关注账本。`,
       },
@@ -525,12 +548,21 @@
       const criterion = form.criterion.value.trim();
       const plan = form.plan.value.trim();
       const endpoint = form.endpoint.value.trim();
+      const repo = form.repo.value.trim();
+      const baselineEndpoint = form.baselineEndpoint.value.trim();
+      const baselineRepo = form.baselineRepo.value.trim();
       const contact = form.contact.value.trim();
       const consent = document.getElementById("f-consent").checked;
+      const axes = Array.from(form.querySelectorAll('input[name="axis"]:checked')).map((el) => el.value);
 
-      if (!task || !criterion || !plan || !endpoint || !contact || !consent) {
+      if (!task || !criterion || !plan || !endpoint || !repo || !baselineEndpoint || !baselineRepo || !contact || !consent) {
         fb.className = "submit-feedback visible error";
         fb.textContent = t.feedback.missing;
+        return;
+      }
+      if (!axes.length) {
+        fb.className = "submit-feedback visible error";
+        fb.textContent = t.feedback.noAxis;
         return;
       }
 
@@ -540,6 +572,24 @@
       } catch {
         fb.className = "submit-feedback visible error";
         fb.textContent = t.feedback.badUrl;
+        return;
+      }
+      try {
+        const u = new URL(baselineEndpoint);
+        if (!/^https?:$/.test(u.protocol)) throw new Error("bad");
+      } catch {
+        fb.className = "submit-feedback visible error";
+        fb.textContent = t.feedback.badBaseline;
+        return;
+      }
+      if (!/^https:\/\/(www\.)?github\.com\//.test(repo)) {
+        fb.className = "submit-feedback visible error";
+        fb.textContent = t.feedback.badRepo;
+        return;
+      }
+      if (!/^https:\/\/(www\.)?github\.com\//.test(baselineRepo)) {
+        fb.className = "submit-feedback visible error";
+        fb.textContent = t.feedback.badBaselineRepo;
         return;
       }
 
@@ -553,7 +603,7 @@
         const resp = await fetch("/api/submit", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ task, criterion, plan, endpoint, contact }),
+          body: JSON.stringify({ task, criterion, axes, plan, endpoint, repo, baselineEndpoint, baselineRepo, contact }),
         });
         const data = await resp.json().catch(() => ({}));
 

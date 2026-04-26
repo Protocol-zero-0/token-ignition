@@ -6,7 +6,7 @@
  *
  *  Include right before </body>, e.g.
  *     <script src="./assets/ledger.js" defer
- *             data-ledger-repo="billion-token-one-task/token-ignition-ledger"
+ *             data-ledger-repo="Protocol-zero-0/token-ignition-ledger"
  *             data-branch="main"
  *             data-poll-seconds="10"
  *             data-show-recent="10"></script>
@@ -19,7 +19,7 @@
   const cfg = {
     repo:
       (script && script.dataset.ledgerRepo) ||
-      "billion-token-one-task/token-ignition-ledger",
+      "Protocol-zero-0/token-ignition-ledger",
     branch:
       (script && script.dataset.branch) ||
       "main",
@@ -42,6 +42,8 @@
 
   const VERDICT_LABELS = {
     pending: "PENDING",
+    admitted: "ADMITTED",
+    verified: "VERIFIED",
     advanced: "ADVANCED",
     ignited: "IGNITED",
     rejected: "REJECTED",

@@ -443,9 +443,45 @@ main {
 }
 
 .field-sub-label {
+  display: block;
+  margin: 12px 0 8px;
   color: var(--fg-dim);
   font-size: 12px;
   padding-left: 0;
+}
+
+.axis-group {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.axis-group label {
+  border: 1px solid var(--border);
+  background: var(--field-bg);
+  color: var(--fg-mid);
+  padding: 12px 14px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.axis-group label:has(input:checked) {
+  border-color: var(--border-bright);
+  background: var(--field-bg-focus);
+  color: var(--fg);
+}
+
+.axis-group input {
+  margin-right: 8px;
+  accent-color: var(--fg);
+}
+
+@media (max-width: 640px) {
+  .axis-group {
+    grid-template-columns: 1fr;
+  }
 }
 
 .submit-form input[type="file"] {
@@ -592,6 +628,11 @@ main {
 }
 
 .ledger-row .status.advanced {
+  color: var(--fg);
+}
+
+.ledger-row .status.admitted,
+.ledger-row .status.verified {
   color: var(--fg);
 }
 
