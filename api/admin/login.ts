@@ -1,3 +1,5 @@
+/// <reference path="../../global.d.ts" />
+
 export const config = { runtime: "edge" };
 
 function json(data: unknown, init: ResponseInit = {}): Response {

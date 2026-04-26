@@ -1,3 +1,5 @@
+/// <reference path="../../global.d.ts" />
+
 export const config = { runtime: "edge" };
 
 const DEFAULT_LEDGER_REPO = "Protocol-zero-0/token-ignition-ledger";

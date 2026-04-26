@@ -1,3 +1,5 @@
+/// <reference path="../global.d.ts" />
+
 // ============================================================================
 //  POST /api/submit   ·  Token-Ignition submission endpoint (Vercel Edge)
 // ----------------------------------------------------------------------------
@@ -6,7 +8,7 @@
 //  3. write submissions/<id>.json to the ledger repo with verdict=pending
 //  4. update submissions/index.json for frontend/admin polling
 //  5. fire-and-forget trigger to the nanobot audit service when configured
-//  5. return { submission_id, ledger_url } immediately
+//  6. return { submission_id, ledger_url } immediately
 //
 //  Required env vars (set in the Vercel project, not in code):
 //    LEDGER_REPO             defaults to Protocol-zero-0/token-ignition-ledger
@@ -312,7 +314,7 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   const v = validate(parsed);
-  if (!v.ok) return json({ ok: false, error: v.error, details: v.details || [] }, { status: 422 });
+  if (v.ok === false) return json({ ok: false, error: v.error, details: v.details || [] }, { status: 422 });
 
   const body = v.body;
   const now = Math.floor(Date.now() / 1000);
