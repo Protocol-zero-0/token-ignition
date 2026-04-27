@@ -4,7 +4,13 @@ import type { SessionUser } from "./auth";
 
 export type RateLimitResult =
   | { ok: true }
-  | { ok: false; status: 429 | 503; error: string; dimension?: "user_minute" | "user_day" | "ip_minute" };
+  | {
+      ok: false;
+      status: 429 | 503;
+      error: string;
+      dimension?: "user_minute" | "user_day" | "ip_minute";
+      diagnostic?: string;
+    };
 
 const USER_PER_MINUTE = 5;
 const USER_PER_DAY = 30;
@@ -24,7 +30,7 @@ function redisConfigured(): boolean {
 async function redisPipeline(commands: Array<Array<string | number>>): Promise<Array<{ result?: unknown; error?: string }>> {
   const base = process.env.UPSTASH_REDIS_REST_URL?.replace(/\/+$/, "");
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!base || !token) throw new Error("upstash redis not configured");
+  if (!base || !token) throw new Error("not_configured");
   const resp = await fetch(`${base}/pipeline`, {
     method: "POST",
     headers: {
@@ -33,7 +39,7 @@ async function redisPipeline(commands: Array<Array<string | number>>): Promise<A
     },
     body: JSON.stringify(commands),
   });
-  if (!resp.ok) throw new Error(`upstash redis failed: ${resp.status}`);
+  if (!resp.ok) throw new Error(`http_${resp.status}`);
   return resp.json();
 }
 
@@ -57,7 +63,7 @@ export async function checkSubmitRateLimit(user: SessionUser, ip: string): Promi
   }
 
   if (!redisConfigured()) {
-    return { ok: false, status: 503, error: "rate limit not configured" };
+    return { ok: false, status: 503, error: "rate limit not configured", diagnostic: "upstash_env_missing" };
   }
 
   const now = Math.floor(Date.now() / 1000);
@@ -80,13 +86,25 @@ export async function checkSubmitRateLimit(user: SessionUser, ip: string): Promi
   let results: Array<{ result?: unknown; error?: string }>;
   try {
     results = await redisPipeline(commands);
-  } catch {
-    return { ok: false, status: 503, error: "rate limit unavailable" };
+  } catch (err) {
+    return {
+      ok: false,
+      status: 503,
+      error: "rate limit unavailable",
+      diagnostic: err instanceof Error ? err.message.slice(0, 80) : "fetch_failed",
+    };
   }
 
   for (let i = 0; i < specs.length; i++) {
     const incr = results[i * 2];
-    if (incr?.error) return { ok: false, status: 503, error: "rate limit unavailable" };
+    if (incr?.error) {
+      return {
+        ok: false,
+        status: 503,
+        error: "rate limit unavailable",
+        diagnostic: `pipeline_${specs[i].dimension}_${String(incr.error).slice(0, 80)}`,
+      };
+    }
     const count = Number(incr?.result || 0);
     const spec = specs[i];
     if (count > spec.limit) {

@@ -313,6 +313,7 @@ export default async function handler(req: Request): Promise<Response> {
         ip,
         limited: limited.status === 429,
         dimension: limited.dimension,
+        diagnostic: limited.diagnostic,
       }));
       return json({ ok: false, error: limited.error }, { status: limited.status });
     }
