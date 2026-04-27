@@ -791,15 +791,27 @@
     }
 
     if (submitButton) {
-      submitButton.addEventListener("click", async (e) => {
+      const clickSubmit = async (e) => {
         e.preventDefault();
         try {
           await handleSubmit();
         } catch (err) {
           setSubmitStatus("error", I18N[LANG].submitStateError("[client] " + (err && err.message ? err.message : "submit button failed")));
         }
-      });
+      };
+      submitButton.addEventListener("click", clickSubmit);
+      submitButton.onclick = clickSubmit;
     }
+
+    document.addEventListener("click", async (e) => {
+      if (!e.target || !e.target.closest || !e.target.closest("#submit-button")) return;
+      e.preventDefault();
+      try {
+        await handleSubmit();
+      } catch (err) {
+        setSubmitStatus("error", I18N[LANG].submitStateError("[client] " + (err && err.message ? err.message : "submit delegated click failed")));
+      }
+    }, true);
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -830,12 +842,20 @@
      -------------------------------------------------------------- */
 
   document.addEventListener("DOMContentLoaded", () => {
-    applyI18n();
-    wireLang();
-    wireAuth();
-    renderAsciiArt();
-    startTopology();
-    renderLedger();
-    wireForm();
+    const boot = (name, fn) => {
+      try {
+        fn();
+      } catch (err) {
+        console.error(`[boot:${name}]`, err);
+      }
+    };
+
+    boot("i18n", applyI18n);
+    boot("lang", wireLang);
+    boot("auth", wireAuth);
+    boot("form", wireForm);
+    boot("ascii", renderAsciiArt);
+    boot("topology", startTopology);
+    boot("ledger", renderLedger);
   });
 })();
