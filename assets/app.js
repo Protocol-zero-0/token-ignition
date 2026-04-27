@@ -642,8 +642,10 @@
   function wireForm() {
     const form = document.getElementById("submit-form");
     if (!form) return;
+    const submitButton = document.getElementById("submit-button");
     const fb = document.getElementById("submit-feedback");
     const topStatus = document.getElementById("submit-status-top");
+    let submitting = false;
 
     function setSubmitStatus(kind, message, ledgerUrl) {
       const className = "submit-feedback visible" + (kind === "error" ? " error" : "");
@@ -697,62 +699,63 @@
     }
 
     async function handleSubmit() {
+      if (submitting) return;
+      submitting = true;
       const t = I18N[LANG];
       setSubmitStatus("info", t.submitStateSending);
-
-      if (AUTH_STATE.guardEnabled && !AUTH_STATE.user) {
-        setSubmitStatus("error", t.feedback.authRequired);
-        renderAuthGate();
-        return;
-      }
-
-      const task = fieldValue("f-task");
-      const criterion = fieldValue("f-criterion");
-      const plan = fieldValue("f-plan");
-      const endpoint = fieldValue("f-endpoint");
-      const repo = fieldValue("f-repo");
-      const baselineEndpoint = fieldValue("f-baseline");
-      const baselineRepo = fieldValue("f-baseline-repo");
-      const contact = fieldValue("f-contact");
-      const consent = Boolean(document.getElementById("f-consent")?.checked);
-      const axes = Array.from(form.querySelectorAll('input[name="axis"]:checked')).map((el) => el.value);
-
-      if (!task || !criterion || !plan || !endpoint || !repo || !baselineEndpoint || !baselineRepo || !contact || !consent) {
-        setSubmitStatus("error", t.feedback.missing);
-        return;
-      }
-      if (!axes.length) {
-        setSubmitStatus("error", t.feedback.noAxis);
-        return;
-      }
-
-      try {
-        const u = new URL(endpoint);
-        if (!/^https?:$/.test(u.protocol)) throw new Error("bad");
-      } catch {
-        setSubmitStatus("error", t.feedback.badUrl);
-        return;
-      }
-      try {
-        const u = new URL(baselineEndpoint);
-        if (!/^https?:$/.test(u.protocol)) throw new Error("bad");
-      } catch {
-        setSubmitStatus("error", t.feedback.badBaseline);
-        return;
-      }
-      if (!/^https:\/\/(www\.)?github\.com\//.test(repo)) {
-        setSubmitStatus("error", t.feedback.badRepo);
-        return;
-      }
-      if (!/^https:\/\/(www\.)?github\.com\//.test(baselineRepo)) {
-        setSubmitStatus("error", t.feedback.badBaselineRepo);
-        return;
-      }
-
-      const btn = form.querySelector(".submit-btn");
+      const btn = submitButton || form.querySelector(".submit-btn");
       if (btn) btn.setAttribute("disabled", "true");
 
       try {
+        if (AUTH_STATE.guardEnabled && !AUTH_STATE.user) {
+          setSubmitStatus("error", t.feedback.authRequired);
+          renderAuthGate();
+          return;
+        }
+
+        const task = fieldValue("f-task");
+        const criterion = fieldValue("f-criterion");
+        const plan = fieldValue("f-plan");
+        const endpoint = fieldValue("f-endpoint");
+        const repo = fieldValue("f-repo");
+        const baselineEndpoint = fieldValue("f-baseline");
+        const baselineRepo = fieldValue("f-baseline-repo");
+        const contact = fieldValue("f-contact");
+        const consent = Boolean(document.getElementById("f-consent")?.checked);
+        const axes = Array.from(form.querySelectorAll('input[name="axis"]:checked')).map((el) => el.value);
+
+        if (!task || !criterion || !plan || !endpoint || !repo || !baselineEndpoint || !baselineRepo || !contact || !consent) {
+          setSubmitStatus("error", t.feedback.missing);
+          return;
+        }
+        if (!axes.length) {
+          setSubmitStatus("error", t.feedback.noAxis);
+          return;
+        }
+
+        try {
+          const u = new URL(endpoint);
+          if (!/^https?:$/.test(u.protocol)) throw new Error("bad");
+        } catch {
+          setSubmitStatus("error", t.feedback.badUrl);
+          return;
+        }
+        try {
+          const u = new URL(baselineEndpoint);
+          if (!/^https?:$/.test(u.protocol)) throw new Error("bad");
+        } catch {
+          setSubmitStatus("error", t.feedback.badBaseline);
+          return;
+        }
+        if (!/^https:\/\/(www\.)?github\.com\//.test(repo)) {
+          setSubmitStatus("error", t.feedback.badRepo);
+          return;
+        }
+        if (!/^https:\/\/(www\.)?github\.com\//.test(baselineRepo)) {
+          setSubmitStatus("error", t.feedback.badBaselineRepo);
+          return;
+        }
+
         const resp = await fetch("/api/submit", {
           method: "POST",
           headers: { "content-type": "application/json" },
@@ -782,8 +785,20 @@
       } catch (err) {
         setSubmitStatus("error", t.submitStateError("[network] " + (err && err.message ? err.message : "unreachable")));
       } finally {
+        submitting = false;
         if (btn) btn.removeAttribute("disabled");
       }
+    }
+
+    if (submitButton) {
+      submitButton.addEventListener("click", async (e) => {
+        e.preventDefault();
+        try {
+          await handleSubmit();
+        } catch (err) {
+          setSubmitStatus("error", I18N[LANG].submitStateError("[client] " + (err && err.message ? err.message : "submit button failed")));
+        }
+      });
     }
 
     form.addEventListener("submit", async (e) => {
