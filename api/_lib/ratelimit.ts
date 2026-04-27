@@ -41,7 +41,7 @@ function sanitizeKeyPart(value: string): string {
   return value.replace(/[^a-zA-Z0-9_.:-]/g, "_").slice(0, 160);
 }
 
-function bypassLogins(): Set<string> {
+function bypassPrincipals(): Set<string> {
   return new Set(
     (process.env.SUBMIT_RATE_LIMIT_BYPASS_GITHUB_LOGINS || "")
       .split(",")
@@ -51,7 +51,8 @@ function bypassLogins(): Set<string> {
 }
 
 export async function checkSubmitRateLimit(user: SessionUser, ip: string): Promise<RateLimitResult> {
-  if (bypassLogins().has(user.login.toLowerCase())) {
+  const bypass = bypassPrincipals();
+  if (bypass.has(user.login.toLowerCase()) || bypass.has(user.id)) {
     return { ok: true };
   }
 

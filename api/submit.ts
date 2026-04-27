@@ -309,6 +309,7 @@ export default async function handler(req: Request): Promise<Response> {
       console.info(JSON.stringify({
         event: "submit_rate_limited",
         userId: auth.user.id,
+        login: auth.user.login,
         ip,
         limited: limited.status === 429,
         dimension: limited.dimension,
