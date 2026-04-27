@@ -293,7 +293,7 @@ export default async function handler(req: Request): Promise<Response> {
 
   const ip = clientIp(req);
   const auth = await requireSubmitUser(req);
-  if (!auth.ok) {
+  if (auth.ok === false) {
     console.info(JSON.stringify({
       event: "submit_blocked",
       reason: auth.error,
@@ -305,7 +305,7 @@ export default async function handler(req: Request): Promise<Response> {
 
   if (auth.guardEnabled && auth.user) {
     const limited = await checkSubmitRateLimit(auth.user, ip);
-    if (!limited.ok) {
+    if (limited.ok === false) {
       console.info(JSON.stringify({
         event: "submit_rate_limited",
         userId: auth.user.id,
