@@ -12,13 +12,17 @@ Tokens are how we make that possible — not why we do it.
 
 ## Status
 
-This repository hosts the **v0.1 protocol test** of Token-Ignition:
+This repository hosts the **v0.2 protocol test** of Token-Ignition:
 
 - static frontend (`index.html` + `assets/`) — live at the Token-Ignition submission site
-- meta-rules, protocol spec, and submission schema (see `/spec`)
-- public ledger of submission hashes — AI audit results appended by bot (to be wired)
+- Vercel Edge API routes under `api/`
+- public GitHub ledger writes for submissions
+- optional GitHub sign-in + Upstash rate limit guard for submit abuse control
+- optional trigger into the audit backend
 
-No backend is wired yet. Submissions in v0.1 are captured client-side and hashed into a local ledger for visual/UX testing; the real submission pipeline (GitHub issue / serverless endpoint → AI audit workflow → ledger append) will land in v0.2.
+Submissions are written to `Protocol-zero-0/token-ignition-ledger` and start as
+`pending`. The audit backend can pick them up through `NANOBOT_PUBLIC_URL` or by
+scanning pending ledger rows.
 
 ---
 
@@ -65,6 +69,127 @@ python3 -m http.server 5173 --bind 127.0.0.1
 ```
 
 The frontend is vanilla HTML/CSS/JS — no build step. Copy / translate strings live in `assets/app.js` under the `I18N` dictionary (`en` and `zh`). The hero ASCII art is procedurally generated in `renderAsciiArt()`. The subtle background node topology is in `startTopology()`.
+
+---
+
+## Vercel environment
+
+Required for live submissions:
+
+```text
+LEDGER_REPO=Protocol-zero-0/token-ignition-ledger
+LEDGER_BRANCH=main
+LEDGER_GITHUB_TOKEN=<GitHub token with contents read/write on the ledger repo>
+ADMIN_TOKEN=<admin password for /admin/>
+CONTACT_ENCRYPTION_SECRET=<strong random secret for contact encryption>
+```
+
+Optional backend trigger:
+
+```text
+NANOBOT_PUBLIC_URL=https://<audit-receiver-origin>
+NANOBOT_TRIGGER_SECRET=<same value configured on the backend>
+```
+
+Optional submit guard:
+
+```text
+SUBMIT_GUARD_ENABLED=true
+GITHUB_CLIENT_ID=<GitHub OAuth App client id>
+GITHUB_CLIENT_SECRET=<GitHub OAuth App client secret>
+SESSION_SECRET=<strong random secret for signing the login cookie>
+UPSTASH_REDIS_REST_URL=<Upstash Redis REST URL>
+UPSTASH_REDIS_REST_TOKEN=<Upstash Redis REST token>
+```
+
+When `SUBMIT_GUARD_ENABLED` is not exactly `true`, the current open submit flow
+is preserved: no GitHub login requirement and no submit rate limit. This lets
+you deploy the code before wiring GitHub OAuth and Upstash.
+
+When `SUBMIT_GUARD_ENABLED=true`, `/api/submit` requires a signed GitHub login
+session and checks the Upstash rate limit before writing to the ledger or
+triggering the audit backend.
+
+GitHub OAuth callback URL:
+
+```text
+https://token-ignition.sora2.today/api/auth/github/callback
+```
+
+Admin login remains separate from GitHub OAuth:
+
+```text
+https://token-ignition.sora2.today/admin/
+```
+
+The admin password is `ADMIN_TOKEN`. It is never shipped to browser JavaScript;
+successful admin login sets an HttpOnly cookie.
+
+---
+
+## Submit guard limits
+
+The current limits are intentionally fixed in code to avoid adding many
+deployment variables:
+
+```text
+GitHub user: 5 submissions / minute
+GitHub user: 30 submissions / day
+IP address: 20 submissions / minute
+```
+
+Implementation notes:
+
+- Rate limit storage uses Upstash Redis REST.
+- Keys include a minute or day bucket and have TTLs, so they do not grow forever.
+- Any exceeded dimension returns HTTP `429` with `{ "ok": false, "error": "rate limit exceeded" }`.
+- A rate-limited request does not write to the ledger and does not call the audit backend.
+- Submit logs include `userId`, `ip`, `limited`, and successful `submission_id`.
+- Logs do not include contact info, OAuth secrets, Redis tokens, or backend trigger secrets.
+
+If these thresholds need to change often, add one future variable such as
+`SUBMIT_RATE_LIMITS=user:5/m,30/d;ip:20/m`. For now they are deliberately kept
+out of environment config.
+
+---
+
+## Smoke tests
+
+Guard disabled:
+
+```bash
+curl -sS -X POST https://token-ignition.sora2.today/api/submit \
+  -H 'content-type: application/json' \
+  --data '{}'
+```
+
+Expected: `422 invalid` with missing field details.
+
+Guard enabled, not logged in:
+
+```bash
+curl -sS -X POST https://token-ignition.sora2.today/api/submit \
+  -H 'content-type: application/json' \
+  --data '{}'
+```
+
+Expected: `401` and `github sign-in required`.
+
+Guard enabled, logged in with GitHub:
+
+1. Open `/api/auth/github/start`.
+2. Complete GitHub login.
+3. Submit from the page.
+
+Expected: `200`, `status: "pending"`, and a new row in
+`submissions/index.json`.
+
+Rate limit:
+
+1. Login with GitHub.
+2. Submit more than 5 times in one minute, or more than 30 times in one day.
+
+Expected: `429 rate limit exceeded`; no new ledger row for the rejected attempt.
 
 ---
 

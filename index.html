@@ -121,6 +121,16 @@
         </div>
         <h2 class="section-title" data-i18n="submitTitle"></h2>
         <p class="submit-intro" data-i18n="submitIntro"></p>
+        <div id="auth-gate" class="auth-gate" data-state="loading">
+          <div id="auth-gate-copy" class="auth-gate-copy"></div>
+          <div class="auth-gate-actions">
+            <a id="github-login" class="auth-btn" href="/api/auth/github/start" hidden>
+              <span>&gt;</span>
+              <span data-i18n="authLogin"></span>
+            </a>
+            <button id="github-logout" class="auth-link" type="button" hidden data-i18n="authLogout"></button>
+          </div>
+        </div>
 
         <form id="submit-form" class="submit-form" novalidate>
           <div class="field">

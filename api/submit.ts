@@ -1,5 +1,9 @@
 /// <reference path="../global.d.ts" />
 
+import { triggerAudit } from "./_lib/audit";
+import { clientIp, requireSubmitUser } from "./_lib/auth";
+import { checkSubmitRateLimit } from "./_lib/ratelimit";
+
 // ============================================================================
 //  POST /api/submit   ·  Token-Ignition submission endpoint (Vercel Edge)
 // ----------------------------------------------------------------------------
@@ -18,6 +22,9 @@
 //    CONTACT_ENCRYPTION_SECRET overrides ADMIN_TOKEN for contact encryption
 //    NANOBOT_PUBLIC_URL      optional, e.g. https://ti-audit.your-domain.com
 //    NANOBOT_TRIGGER_SECRET  optional shared secret (matches backend config.yaml)
+//    SUBMIT_GUARD_ENABLED    optional: "true" enables GitHub auth + rate limit
+//    GITHUB_CLIENT_ID / GITHUB_CLIENT_SECRET / SESSION_SECRET
+//    UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN
 // ============================================================================
 
 export const config = { runtime: "edge" };
@@ -280,31 +287,35 @@ async function updateIndex(
   if (!putResp.ok) throw new Error(`github PUT ${path} failed: ${putResp.status}`);
 }
 
-async function triggerAudit(submissionId: string, body: SubmitBody): Promise<void> {
-  const base = process.env.NANOBOT_PUBLIC_URL?.replace(/\/+$/, "");
-  const secret = process.env.NANOBOT_TRIGGER_SECRET;
-  if (!base || !secret) return;
-  const url = `${base}/v1/audit/trigger`;
-  const { contact: _contact, ...submission } = body;
-  try {
-    await fetch(url, {
-      method: "POST",
-      headers: {
-        "authorization": `Bearer ${secret}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({ submission_id: submissionId, submission }),
-      signal: AbortSignal.timeout(3000),
-    }).catch(() => {});
-  } catch {
-    // Audit service may be warming up — a cron over pending records is a
-    // planned safety net for v0.2.1.
-  }
-}
-
 export default async function handler(req: Request): Promise<Response> {
   if (req.method === "OPTIONS") return json({ ok: true });
   if (req.method !== "POST") return json({ ok: false, error: "method not allowed" }, { status: 405 });
+
+  const ip = clientIp(req);
+  const auth = await requireSubmitUser(req);
+  if (!auth.ok) {
+    console.info(JSON.stringify({
+      event: "submit_blocked",
+      reason: auth.error,
+      ip,
+      limited: false,
+    }));
+    return json({ ok: false, error: auth.error }, { status: auth.status });
+  }
+
+  if (auth.guardEnabled && auth.user) {
+    const limited = await checkSubmitRateLimit(auth.user, ip);
+    if (!limited.ok) {
+      console.info(JSON.stringify({
+        event: "submit_rate_limited",
+        userId: auth.user.id,
+        ip,
+        limited: limited.status === 429,
+        dimension: limited.dimension,
+      }));
+      return json({ ok: false, error: limited.error }, { status: limited.status });
+    }
+  }
 
   let parsed: unknown;
   try {
@@ -330,7 +341,15 @@ export default async function handler(req: Request): Promise<Response> {
   }
   if (!wrote.ok) return json({ ok: false, error: wrote.error }, { status: 502 });
 
-  void triggerAudit(submissionId, body);
+  const { contact: _contact, ...submission } = body;
+  console.info(JSON.stringify({
+    event: "submit_accepted",
+    userId: auth.user?.id || null,
+    ip,
+    limited: false,
+    submission_id: submissionId,
+  }));
+  void triggerAudit(submissionId, submission);
 
   return json({
     ok: true,

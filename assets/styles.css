@@ -385,6 +385,70 @@ main {
   font-size: 14px;
 }
 
+.auth-gate {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  margin: 0 0 32px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.auth-gate[data-state="required"] {
+  border-color: var(--border-bright);
+}
+
+.auth-gate-copy {
+  color: var(--fg-mid);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.auth-gate-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.auth-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-bright);
+  color: var(--fg);
+  text-decoration: none;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+
+.auth-btn:hover {
+  border-color: var(--fg);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.auth-link {
+  background: none;
+  border: none;
+  color: var(--fg-dim);
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+@media (max-width: 640px) {
+  .auth-gate {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
 .submit-form .field {
   margin-bottom: 32px;
 }

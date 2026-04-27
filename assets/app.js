@@ -92,7 +92,13 @@
       submitLabel: "submission",
       submitTitle: "APPLY BY SUBMITTING",
       submitIntro:
-        "Seven fields. No account. Your entry is hashed and appended to a public ledger. Review starts from pending and can advance through the gates.",
+        "Seven fields. GitHub sign-in may be required before submission. Your entry is hashed and appended to a public ledger. Review starts from pending and can advance through the gates.",
+      authRequired: "Submissions currently require GitHub sign-in.",
+      authOptional: "GitHub sign-in is available. It may become required as the audit queue opens.",
+      authConfiguredMissing: "Submission guard is enabled but GitHub auth is not configured.",
+      authLogin: "Continue with GitHub",
+      authLogout: "sign out",
+      authSignedIn: (login) => `Signed in as @${login}`,
       field1Label: "task.definition",
       field1Hint:
         "What does the system have to do? One paragraph. Must be testable.",
@@ -139,6 +145,7 @@
         "Every application is stored as a hash on a public repository. No personal data is published.",
 
       feedback: {
+        authRequired: "[reject] GitHub sign-in required before submitting.",
         missing: "[reject] missing required fields. check highlighted items.",
         noAxis: "[reject] evolution.axes must have at least one selected.",
         badUrl:
@@ -228,7 +235,13 @@
       submitLabel: "申请",
       submitTitle: "提交即申请",
       submitIntro:
-        "七个字段。不用注册账号。提交会被哈希后写入公开账本,先进入 pending,再沿着门槛推进。",
+        "七个字段。提交前可能需要 GitHub 登录。提交会被哈希后写入公开账本,先进入 pending,再沿着门槛推进。",
+      authRequired: "当前评审提交仅接受 GitHub 登录用户。",
+      authOptional: "GitHub 登录已经可用。审计队列开放后可能会强制要求登录。",
+      authConfiguredMissing: "提交风控已启用,但 GitHub 登录尚未配置。",
+      authLogin: "使用 GitHub 登录",
+      authLogout: "退出",
+      authSignedIn: (login) => `已使用 GitHub 登录:@${login}`,
       field1Label: "task.definition",
       field1Hint: "系统要做什么?一段话。必须可测试。",
       field1Ph:
@@ -272,6 +285,7 @@
       ledgerIntro: "每条申请以哈希形式写入公开仓库,不发布任何个人信息。",
 
       feedback: {
+        authRequired: "[reject] 请先使用 GitHub 登录后再提交。",
         missing: "[reject] 必填字段缺失。请检查标红项。",
         noAxis: "[reject] evolution.axes 至少选择一项。",
         badUrl: "[reject] scaffold endpoint 必须是有效 URL——审计器需要抓取它。",
@@ -285,6 +299,12 @@
   };
 
   let LANG = localStorage.getItem("ti.lang") || "en";
+  let AUTH_STATE = {
+    loaded: false,
+    guardEnabled: false,
+    configured: false,
+    user: null,
+  };
 
   /* --------------------------------------------------------------
      i18n renderer
@@ -349,6 +369,8 @@
         b.getAttribute("data-lang") === LANG ? "true" : "false"
       );
     });
+
+    renderAuthGate();
   }
 
   function escapeHtml(s) {
@@ -524,6 +546,80 @@
      submit form
      -------------------------------------------------------------- */
 
+  async function loadAuthStatus() {
+    try {
+      const resp = await fetch("/api/auth/me", { cache: "no-store" });
+      const data = await resp.json().catch(() => ({}));
+      AUTH_STATE = {
+        loaded: true,
+        guardEnabled: Boolean(data.guard_enabled),
+        configured: Boolean(data.configured),
+        user: data.user || null,
+      };
+    } catch {
+      AUTH_STATE = {
+        loaded: true,
+        guardEnabled: false,
+        configured: false,
+        user: null,
+      };
+    }
+    renderAuthGate();
+  }
+
+  function renderAuthGate() {
+    const gate = document.getElementById("auth-gate");
+    const copy = document.getElementById("auth-gate-copy");
+    const login = document.getElementById("github-login");
+    const logout = document.getElementById("github-logout");
+    if (!gate || !copy || !login || !logout) return;
+    const t = I18N[LANG];
+
+    gate.hidden = false;
+    login.hidden = true;
+    logout.hidden = true;
+
+    if (!AUTH_STATE.loaded) {
+      gate.dataset.state = "loading";
+      copy.textContent = "...";
+      return;
+    }
+
+    if (!AUTH_STATE.guardEnabled && !AUTH_STATE.configured && !AUTH_STATE.user) {
+      gate.hidden = true;
+      return;
+    }
+
+    if (AUTH_STATE.guardEnabled && !AUTH_STATE.configured) {
+      gate.dataset.state = "required";
+      copy.textContent = t.authConfiguredMissing;
+      return;
+    }
+
+    if (AUTH_STATE.user) {
+      gate.dataset.state = "signed-in";
+      copy.textContent = t.authSignedIn(AUTH_STATE.user.login);
+      logout.hidden = false;
+      return;
+    }
+
+    gate.dataset.state = AUTH_STATE.guardEnabled ? "required" : "optional";
+    copy.textContent = AUTH_STATE.guardEnabled ? t.authRequired : t.authOptional;
+    login.hidden = false;
+  }
+
+  function wireAuth() {
+    const logout = document.getElementById("github-logout");
+    if (logout) {
+      logout.addEventListener("click", async () => {
+        await fetch("/api/auth/logout", { method: "POST" }).catch(() => {});
+        AUTH_STATE.user = null;
+        renderAuthGate();
+      });
+    }
+    loadAuthStatus();
+  }
+
   function hashString(s) {
     // quick, non-crypto hash just for a local visual receipt
     let h = 2166136261 >>> 0;
@@ -543,6 +639,12 @@
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const t = I18N[LANG];
+      if (AUTH_STATE.guardEnabled && !AUTH_STATE.user) {
+        fb.className = "submit-feedback visible error";
+        fb.textContent = t.feedback.authRequired;
+        renderAuthGate();
+        return;
+      }
 
       const task = form.task.value.trim();
       const criterion = form.criterion.value.trim();
@@ -609,7 +711,9 @@
 
         if (!resp.ok || !data.ok) {
           fb.className = "submit-feedback visible error";
-          fb.textContent = "[reject] " + (data.error || `http ${resp.status}`);
+          fb.textContent = resp.status === 429
+            ? "[reject] rate limit exceeded"
+            : "[reject] " + (data.error || `http ${resp.status}`);
           return;
         }
 
@@ -650,6 +754,7 @@
   document.addEventListener("DOMContentLoaded", () => {
     applyI18n();
     wireLang();
+    wireAuth();
     renderAsciiArt();
     startTopology();
     renderLedger();
