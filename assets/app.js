@@ -647,9 +647,29 @@
 
     function setSubmitStatus(kind, message, ledgerUrl) {
       const className = "submit-feedback visible" + (kind === "error" ? " error" : "");
+      const gate = document.getElementById("auth-gate");
+      const gateCopy = document.getElementById("auth-gate-copy");
+      const gateActions = gate ? gate.querySelector(".auth-gate-actions") : null;
       if (fb) {
         fb.className = className;
         fb.textContent = message;
+      }
+      if (gate && gateCopy) {
+        gate.hidden = false;
+        gate.dataset.state = kind === "success" ? "success" : kind === "error" ? "error" : "loading";
+        gateCopy.textContent = message;
+        const existing = document.getElementById("submit-ledger-link");
+        if (existing) existing.remove();
+        if (ledgerUrl && gateActions) {
+          const link = document.createElement("a");
+          link.id = "submit-ledger-link";
+          link.className = "auth-btn";
+          link.href = ledgerUrl;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.textContent = I18N[LANG].submitStateLedger;
+          gateActions.prepend(link);
+        }
       }
       if (topStatus) {
         topStatus.hidden = false;
@@ -665,8 +685,9 @@
           topStatus.appendChild(link);
         }
       }
-      if (topStatus && kind !== "info") {
-        topStatus.scrollIntoView({ behavior: "smooth", block: "center" });
+      const scrollTarget = gate || topStatus;
+      if (scrollTarget) {
+        scrollTarget.scrollIntoView({ behavior: "smooth", block: "center" });
       }
     }
 
