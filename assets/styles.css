@@ -400,6 +400,14 @@ main {
   border-color: var(--border-bright);
 }
 
+.auth-gate[data-state="success"] {
+  border-color: var(--fg);
+}
+
+.auth-gate[data-state="error"] {
+  border-color: #4d2525;
+}
+
 .auth-gate-copy {
   color: var(--fg-mid);
   font-size: 12px;
@@ -447,6 +455,30 @@ main {
     align-items: flex-start;
     flex-direction: column;
   }
+}
+
+.submit-status-top {
+  margin: -12px 0 32px;
+  padding: 14px 16px;
+  border: 1px solid var(--border-bright);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--fg);
+  font-size: 13px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.submit-status-top.error {
+  border-color: #4d2525;
+}
+
+.submit-status-top.success {
+  border-color: var(--fg);
+}
+
+.submit-status-top a {
+  color: var(--fg);
+  text-underline-offset: 4px;
 }
 
 .submit-form .field {

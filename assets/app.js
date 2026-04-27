@@ -99,6 +99,10 @@
       authLogin: "Continue with GitHub",
       authLogout: "sign out",
       authSignedIn: (login) => `Signed in as @${login}`,
+      submitStateSending: "Submitting to the audit queue...",
+      submitStateSuccess: (id) => `Submission accepted.\nsubmission_id: ${id}\nstatus: pending`,
+      submitStateError: (msg) => `Submission failed.\n${msg}`,
+      submitStateLedger: "Open ledger record",
       field1Label: "task.definition",
       field1Hint:
         "What does the system have to do? One paragraph. Must be testable.",
@@ -242,6 +246,10 @@
       authLogin: "使用 GitHub 登录",
       authLogout: "退出",
       authSignedIn: (login) => `已使用 GitHub 登录:@${login}`,
+      submitStateSending: "正在提交到审计队列...",
+      submitStateSuccess: (id) => `提交已确认。\nsubmission_id: ${id}\nstatus: pending`,
+      submitStateError: (msg) => `提交失败。\n${msg}`,
+      submitStateLedger: "打开账本记录",
       field1Label: "task.definition",
       field1Hint: "系统要做什么?一段话。必须可测试。",
       field1Ph:
@@ -635,13 +643,38 @@
     const form = document.getElementById("submit-form");
     if (!form) return;
     const fb = document.getElementById("submit-feedback");
+    const topStatus = document.getElementById("submit-status-top");
+
+    function setSubmitStatus(kind, message, ledgerUrl) {
+      const className = "submit-feedback visible" + (kind === "error" ? " error" : "");
+      if (fb) {
+        fb.className = className;
+        fb.textContent = message;
+      }
+      if (topStatus) {
+        topStatus.hidden = false;
+        topStatus.className = "submit-status-top" + (kind === "error" ? " error" : kind === "success" ? " success" : "");
+        topStatus.textContent = message;
+        if (ledgerUrl) {
+          const link = document.createElement("a");
+          link.href = ledgerUrl;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.textContent = I18N[LANG].submitStateLedger;
+          topStatus.appendChild(document.createTextNode("\n"));
+          topStatus.appendChild(link);
+        }
+      }
+      if (topStatus && kind !== "info") {
+        topStatus.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const t = I18N[LANG];
       if (AUTH_STATE.guardEnabled && !AUTH_STATE.user) {
-        fb.className = "submit-feedback visible error";
-        fb.textContent = t.feedback.authRequired;
+        setSubmitStatus("error", t.feedback.authRequired);
         renderAuthGate();
         return;
       }
@@ -658,13 +691,11 @@
       const axes = Array.from(form.querySelectorAll('input[name="axis"]:checked')).map((el) => el.value);
 
       if (!task || !criterion || !plan || !endpoint || !repo || !baselineEndpoint || !baselineRepo || !contact || !consent) {
-        fb.className = "submit-feedback visible error";
-        fb.textContent = t.feedback.missing;
+        setSubmitStatus("error", t.feedback.missing);
         return;
       }
       if (!axes.length) {
-        fb.className = "submit-feedback visible error";
-        fb.textContent = t.feedback.noAxis;
+        setSubmitStatus("error", t.feedback.noAxis);
         return;
       }
 
@@ -672,32 +703,27 @@
         const u = new URL(endpoint);
         if (!/^https?:$/.test(u.protocol)) throw new Error("bad");
       } catch {
-        fb.className = "submit-feedback visible error";
-        fb.textContent = t.feedback.badUrl;
+        setSubmitStatus("error", t.feedback.badUrl);
         return;
       }
       try {
         const u = new URL(baselineEndpoint);
         if (!/^https?:$/.test(u.protocol)) throw new Error("bad");
       } catch {
-        fb.className = "submit-feedback visible error";
-        fb.textContent = t.feedback.badBaseline;
+        setSubmitStatus("error", t.feedback.badBaseline);
         return;
       }
       if (!/^https:\/\/(www\.)?github\.com\//.test(repo)) {
-        fb.className = "submit-feedback visible error";
-        fb.textContent = t.feedback.badRepo;
+        setSubmitStatus("error", t.feedback.badRepo);
         return;
       }
       if (!/^https:\/\/(www\.)?github\.com\//.test(baselineRepo)) {
-        fb.className = "submit-feedback visible error";
-        fb.textContent = t.feedback.badBaselineRepo;
+        setSubmitStatus("error", t.feedback.badBaselineRepo);
         return;
       }
 
       // submitting state
-      fb.className = "submit-feedback visible";
-      fb.textContent = "> submitting to audit queue…";
+      setSubmitStatus("info", t.submitStateSending);
       const btn = form.querySelector(".submit-btn");
       if (btn) btn.setAttribute("disabled", "true");
 
@@ -710,10 +736,15 @@
         const data = await resp.json().catch(() => ({}));
 
         if (!resp.ok || !data.ok) {
-          fb.className = "submit-feedback visible error";
-          fb.textContent = resp.status === 429
+          const msg = resp.status === 429
             ? "[reject] rate limit exceeded"
             : "[reject] " + (data.error || `http ${resp.status}`);
+          setSubmitStatus("error", t.submitStateError(msg));
+          return;
+        }
+
+        if (!data.submission_id || !data.ledger_url) {
+          setSubmitStatus("error", t.submitStateError("[reject] submit response missing ledger confirmation"));
           return;
         }
 
@@ -721,12 +752,10 @@
           "0x" + String(data.submission_id || "").padEnd(12, "·").slice(0, 4) +
           "…" + String(data.submission_id || "").slice(-4);
 
-        fb.className = "submit-feedback visible";
-        fb.textContent = t.feedback.ok(shortHash);
+        setSubmitStatus("success", `${t.submitStateSuccess(data.submission_id)}\n${t.feedback.ok(shortHash)}`, data.ledger_url);
         form.reset();
       } catch (err) {
-        fb.className = "submit-feedback visible error";
-        fb.textContent = "[network] " + (err && err.message ? err.message : "unreachable");
+        setSubmitStatus("error", t.submitStateError("[network] " + (err && err.message ? err.message : "unreachable")));
       } finally {
         if (btn) btn.removeAttribute("disabled");
       }
