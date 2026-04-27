@@ -691,24 +691,30 @@
       }
     }
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+    function fieldValue(id) {
+      const el = document.getElementById(id);
+      return el && typeof el.value === "string" ? el.value.trim() : "";
+    }
+
+    async function handleSubmit() {
       const t = I18N[LANG];
+      setSubmitStatus("info", t.submitStateSending);
+
       if (AUTH_STATE.guardEnabled && !AUTH_STATE.user) {
         setSubmitStatus("error", t.feedback.authRequired);
         renderAuthGate();
         return;
       }
 
-      const task = form.task.value.trim();
-      const criterion = form.criterion.value.trim();
-      const plan = form.plan.value.trim();
-      const endpoint = form.endpoint.value.trim();
-      const repo = form.repo.value.trim();
-      const baselineEndpoint = form.baselineEndpoint.value.trim();
-      const baselineRepo = form.baselineRepo.value.trim();
-      const contact = form.contact.value.trim();
-      const consent = document.getElementById("f-consent").checked;
+      const task = fieldValue("f-task");
+      const criterion = fieldValue("f-criterion");
+      const plan = fieldValue("f-plan");
+      const endpoint = fieldValue("f-endpoint");
+      const repo = fieldValue("f-repo");
+      const baselineEndpoint = fieldValue("f-baseline");
+      const baselineRepo = fieldValue("f-baseline-repo");
+      const contact = fieldValue("f-contact");
+      const consent = Boolean(document.getElementById("f-consent")?.checked);
       const axes = Array.from(form.querySelectorAll('input[name="axis"]:checked')).map((el) => el.value);
 
       if (!task || !criterion || !plan || !endpoint || !repo || !baselineEndpoint || !baselineRepo || !contact || !consent) {
@@ -743,8 +749,6 @@
         return;
       }
 
-      // submitting state
-      setSubmitStatus("info", t.submitStateSending);
       const btn = form.querySelector(".submit-btn");
       if (btn) btn.setAttribute("disabled", "true");
 
@@ -779,6 +783,15 @@
         setSubmitStatus("error", t.submitStateError("[network] " + (err && err.message ? err.message : "unreachable")));
       } finally {
         if (btn) btn.removeAttribute("disabled");
+      }
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      try {
+        await handleSubmit();
+      } catch (err) {
+        setSubmitStatus("error", I18N[LANG].submitStateError("[client] " + (err && err.message ? err.message : "submit handler failed")));
       }
     });
   }
