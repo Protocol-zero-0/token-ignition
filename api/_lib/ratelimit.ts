@@ -41,7 +41,20 @@ function sanitizeKeyPart(value: string): string {
   return value.replace(/[^a-zA-Z0-9_.:-]/g, "_").slice(0, 160);
 }
 
+function bypassLogins(): Set<string> {
+  return new Set(
+    (process.env.SUBMIT_RATE_LIMIT_BYPASS_GITHUB_LOGINS || "")
+      .split(",")
+      .map((x) => x.trim().toLowerCase())
+      .filter(Boolean),
+  );
+}
+
 export async function checkSubmitRateLimit(user: SessionUser, ip: string): Promise<RateLimitResult> {
+  if (bypassLogins().has(user.login.toLowerCase())) {
+    return { ok: true };
+  }
+
   if (!redisConfigured()) {
     return { ok: false, status: 503, error: "rate limit not configured" };
   }
@@ -82,4 +95,3 @@ export async function checkSubmitRateLimit(user: SessionUser, ip: string): Promi
 
   return { ok: true };
 }
-

@@ -100,6 +100,7 @@ GITHUB_CLIENT_SECRET=<GitHub OAuth App client secret>
 SESSION_SECRET=<strong random secret for signing the login cookie>
 UPSTASH_REDIS_REST_URL=<Upstash Redis REST URL>
 UPSTASH_REDIS_REST_TOKEN=<Upstash Redis REST token>
+SUBMIT_RATE_LIMIT_BYPASS_GITHUB_LOGINS=<optional comma-separated GitHub logins for testing>
 ```
 
 When `SUBMIT_GUARD_ENABLED` is not exactly `true`, the current open submit flow
@@ -109,6 +110,14 @@ you deploy the code before wiring GitHub OAuth and Upstash.
 When `SUBMIT_GUARD_ENABLED=true`, `/api/submit` requires a signed GitHub login
 session and checks the Upstash rate limit before writing to the ledger or
 triggering the audit backend.
+
+`SUBMIT_RATE_LIMIT_BYPASS_GITHUB_LOGINS` is only for trusted testing accounts.
+Those GitHub users still have to sign in, but they skip Upstash rate checks.
+Example:
+
+```text
+SUBMIT_RATE_LIMIT_BYPASS_GITHUB_LOGINS=your-github-login,teammate-login
+```
 
 GitHub OAuth callback URL:
 
@@ -144,6 +153,7 @@ Implementation notes:
 - Keys include a minute or day bucket and have TTLs, so they do not grow forever.
 - Any exceeded dimension returns HTTP `429` with `{ "ok": false, "error": "rate limit exceeded" }`.
 - A rate-limited request does not write to the ledger and does not call the audit backend.
+- Logins listed in `SUBMIT_RATE_LIMIT_BYPASS_GITHUB_LOGINS` bypass only the rate limit, not GitHub authentication.
 - Submit logs include `userId`, `ip`, `limited`, and successful `submission_id`.
 - Logs do not include contact info, OAuth secrets, Redis tokens, or backend trigger secrets.
 
