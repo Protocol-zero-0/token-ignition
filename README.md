@@ -215,6 +215,6 @@ Expected: `429 rate limit exceeded`; no new ledger row for the rejected attempt.
 
 ## Host
 
-Research host: **Joule Research**. Token-Ignition is operated as a selection front door for Joule's research group.
+Research host: **Joule Research**. Token-Ignition is operated as a selection front door for Joule's research group, and is a [JouleBeat](https://joulebeat.com/) project — live gate at [token-ignition.joulebeat.com](https://token-ignition.joulebeat.com/), write-up at [joulebeat.com/projects/token-ignition](https://joulebeat.com/projects/token-ignition/).
 
 This is a protocol test. The selection machinery is intentionally minimal. If you have a clean criticism of the protocol, file an issue.
