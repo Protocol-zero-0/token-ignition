@@ -306,7 +306,18 @@
     },
   };
 
-  let LANG = localStorage.getItem("ti.lang") || "en";
+  const languageEntry = new URL(location.href);
+  const requestedLanguage = languageEntry.searchParams.get("lang");
+  let savedLanguage;
+  try { savedLanguage = localStorage.getItem("ti.lang"); } catch (_) {}
+  const incomingLanguage = requestedLanguage === "en" ? "en" :
+    (requestedLanguage === "zh" || requestedLanguage === "zh-CN" ? "zh" : null);
+  let LANG = incomingLanguage || (savedLanguage === "zh" ? "zh" : "en");
+  if (incomingLanguage) {
+    try { localStorage.setItem("ti.lang", LANG); } catch (_) {}
+    languageEntry.searchParams.delete("lang");
+    try { history.replaceState(null, "", languageEntry.pathname + languageEntry.search + languageEntry.hash); } catch (_) {}
+  }
   let AUTH_STATE = {
     loaded: false,
     guardEnabled: false,
@@ -831,7 +842,7 @@
     document.querySelectorAll(".lang-btn").forEach((b) => {
       b.addEventListener("click", () => {
         LANG = b.getAttribute("data-lang");
-        localStorage.setItem("ti.lang", LANG);
+        try { localStorage.setItem("ti.lang", LANG); } catch (_) {}
         applyI18n();
       });
     });
