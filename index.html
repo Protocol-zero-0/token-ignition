@@ -1,17 +1,17 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-    <title>TOKEN-IGNITION</title>
-    <meta name="description" content="Token Ignition — the entry gate to the Ladder Plan. Token is to cognition what joule is to energy. The bottleneck is no longer the model, it is architecture. Apply by submitting." />
+    <title>TOKEN-IGNITION · 申请算力</title>
+    <meta name="description" content="Token Ignition：我们出 GPU，你来做让 AI 自己变强的研究。评测、harness 自进化、把能力训进模型、AI 做科研。约 15 分钟提交申请，AI 逐项评审。 We fund GPU compute for research on AI that improves itself." />
     <link rel="canonical" href="https://token-ignition.joulebeat.com/" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://token-ignition.joulebeat.com/" />
     <meta property="og:site_name" content="JouleBeat" />
-    <meta property="og:title" content="TOKEN-IGNITION — the entry gate to the Ladder Plan" />
-    <meta property="og:description" content="Token is to cognition what joule is to energy. The bottleneck is no longer the model, it is architecture. Apply by submitting." />
+    <meta property="og:title" content="TOKEN-IGNITION · 我们出 GPU，你来做让 AI 自己变强的研究" />
+    <meta property="og:description" content="评测、harness 自进化、把能力训进模型、AI 做科研。约 15 分钟提交申请，AI 逐项评审，通过即发试跑额度。" />
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -20,27 +20,15 @@
     />
     <link rel="stylesheet" href="./assets/styles.css" />
   </head>
-  <body>
+    <body>
     <canvas id="topology" aria-hidden="true"></canvas>
 
     <header class="topbar">
       <div class="topbar-left" data-i18n="brand"></div>
       <div class="topbar-right">
-        <button
-          class="lang-btn"
-          data-lang="en"
-          aria-label="Switch to English"
-        >
-          EN
-        </button>
+        <button class="lang-btn" data-lang="zh" aria-label="切换为中文">中文</button>
         <span class="sep">/</span>
-        <button
-          class="lang-btn"
-          data-lang="zh"
-          aria-label="切换为中文"
-        >
-          中文
-        </button>
+        <button class="lang-btn" data-lang="en" aria-label="Switch to English">EN</button>
       </div>
     </header>
 
@@ -48,86 +36,59 @@
       <!-- HERO -->
       <section class="hero">
         <pre id="ascii-art" class="ascii-art" aria-hidden="true"></pre>
-
         <div class="hero-text">
           <h1 class="title">TOKEN-IGNITION</h1>
           <p class="subtitle" data-i18n="heroSubtitle"></p>
-          <p class="hook" data-i18n="heroHook"></p>
-          <p class="tagline" data-i18n="heroTagline"></p>
-          <a href="#submit" class="cta" data-i18n="heroCTA"></a>
-          <div class="scroll-hint" data-i18n="scrollHint"></div>
+          <ul class="hero-facts" id="hero-facts"></ul>
+          <div class="hero-actions">
+            <a href="#apply" class="cta" data-i18n="heroCTA"></a>
+            <a href="#directions" class="cta cta-ghost" data-i18n="heroCTA2"></a>
+          </div>
         </div>
       </section>
 
-      <!-- MANIFESTO -->
-      <section id="manifesto" class="section">
+      <!-- DIRECTIONS -->
+      <section id="directions" class="section">
         <div class="section-meta">
           <span class="section-num">01</span>
-          <span class="section-label" data-i18n="manifestoLabel"></span>
+          <span class="section-label" data-i18n="dirLabel"></span>
         </div>
-        <h2 class="section-title" data-i18n="manifestoTitle"></h2>
-        <div class="prose" data-i18n="manifestoBody"></div>
+        <h2 class="section-title" data-i18n="dirTitle"></h2>
+        <p class="prose" data-i18n="dirIntro"></p>
+        <div class="dir-grid" id="dir-grid"></div>
       </section>
 
-      <!-- PROTOCOL -->
-      <section id="protocol" class="section">
+      <!-- FLOW -->
+      <section id="flow" class="section">
         <div class="section-meta">
           <span class="section-num">02</span>
-          <span class="section-label" data-i18n="protocolLabel"></span>
+          <span class="section-label" data-i18n="flowLabel"></span>
         </div>
-        <h2 class="section-title" data-i18n="protocolTitle"></h2>
-        <ol id="protocol-list" class="kv-list"></ol>
+        <h2 class="section-title" data-i18n="flowTitle"></h2>
+        <ol class="flow-list" id="flow-list"></ol>
+        <div class="allocation-grid" id="tier-grid"></div>
       </section>
 
-      <!-- RULES -->
-      <section id="rules" class="section">
+      <!-- REVIEW -->
+      <section id="review" class="section">
         <div class="section-meta">
           <span class="section-num">03</span>
-          <span class="section-label" data-i18n="rulesLabel"></span>
+          <span class="section-label" data-i18n="reviewLabel"></span>
         </div>
-        <h2 class="section-title" data-i18n="rulesTitle"></h2>
-        <ol id="rules-list" class="rule-list"></ol>
-
-        <div class="callout">
-          <div class="callout-head" data-i18n="rulesCalloutHead"></div>
-          <div class="callout-body" data-i18n="rulesCalloutBody"></div>
-        </div>
+        <h2 class="section-title" data-i18n="reviewTitle"></h2>
+        <p class="prose" data-i18n="reviewIntro"></p>
+        <ol class="kv-list" id="gate-list"></ol>
       </section>
 
-      <!-- ALLOCATION -->
-      <section id="allocation" class="section">
+      <!-- APPLY -->
+      <section id="apply" class="section submit-section">
         <div class="section-meta">
           <span class="section-num">04</span>
-          <span class="section-label" data-i18n="allocationLabel"></span>
+          <span class="section-label" data-i18n="applyLabel"></span>
         </div>
-        <h2 class="section-title" data-i18n="allocationTitle"></h2>
-        <div class="allocation-grid">
-          <div class="allocation-cell">
-            <div class="allocation-key">gate.1</div>
-            <div class="allocation-value">1M</div>
-            <div class="allocation-note" data-i18n="allocation1Note"></div>
-          </div>
-          <div class="allocation-cell">
-            <div class="allocation-key">gate.2</div>
-            <div class="allocation-value">10M</div>
-            <div class="allocation-note" data-i18n="allocation2Note"></div>
-          </div>
-          <div class="allocation-cell">
-            <div class="allocation-key">gate.3</div>
-            <div class="allocation-value">100M</div>
-            <div class="allocation-note" data-i18n="allocation3Note"></div>
-          </div>
-        </div>
-      </section>
+        <h2 class="section-title" data-i18n="applyTitle"></h2>
+        <p class="submit-intro" data-i18n="applyIntro"></p>
 
-      <!-- SUBMIT -->
-      <section id="submit" class="section submit-section">
-        <div class="section-meta">
-          <span class="section-num">05</span>
-          <span class="section-label" data-i18n="submitLabel"></span>
-        </div>
-        <h2 class="section-title" data-i18n="submitTitle"></h2>
-        <p class="submit-intro" data-i18n="submitIntro"></p>
         <div id="auth-gate" class="auth-gate" data-state="loading">
           <div id="auth-gate-copy" class="auth-gate-copy"></div>
           <div class="auth-gate-actions">
@@ -138,138 +99,103 @@
             <button id="github-logout" class="auth-link" type="button" hidden data-i18n="authLogout"></button>
           </div>
         </div>
-        <div id="submit-status-top" class="submit-status-top" aria-live="polite" hidden></div>
 
-        <form id="submit-form" class="submit-form" novalidate>
+        <div id="status-panel" class="status-panel" hidden></div>
+
+        <details class="helper" id="helper">
+          <summary data-i18n="helperSummary"></summary>
+          <p class="field-hint" data-i18n="helperIntro"></p>
+          <pre class="helper-prompt" id="helper-prompt"></pre>
+          <button type="button" class="auth-link" id="helper-copy" data-i18n="helperCopy"></button>
+        </details>
+
+        <form id="apply-form" class="submit-form" novalidate hidden>
           <div class="field">
-            <label class="field-label" for="f-task">
-              <span class="field-index">[1/7]</span>
-              <span data-i18n="field1Label"></span>
-            </label>
-            <div class="field-hint" data-i18n="field1Hint"></div>
-            <textarea
-              id="f-task"
-              name="task"
-              rows="5"
-              maxlength="2000"
-              required
-              data-i18n-ph="field1Ph"
-            ></textarea>
+            <label class="field-label" for="f-direction"><span class="field-index">[1/7]</span> <span data-i18n="f1Label"></span></label>
+            <div class="field-hint" data-i18n="f1Hint"></div>
+            <select id="f-direction" name="direction" required></select>
           </div>
-
           <div class="field">
-            <label class="field-label" for="f-criterion">
-              <span class="field-index">[2/7]</span>
-              <span data-i18n="field2Label"></span>
-            </label>
-            <div class="field-hint" data-i18n="field2Hint"></div>
-            <textarea
-              id="f-criterion"
-              name="criterion"
-              rows="4"
-              maxlength="1500"
-              required
-              data-i18n-ph="field2Ph"
-            ></textarea>
+            <label class="field-label" for="f-question"><span class="field-index">[2/7]</span> <span data-i18n="f2Label"></span></label>
+            <div class="field-hint" data-i18n="f2Hint"></div>
+            <textarea id="f-question" rows="2" maxlength="300" data-i18n-ph="f2Ph"></textarea>
           </div>
-
           <div class="field">
-            <label class="field-label">
-              <span class="field-index">[3/7]</span>
-              <span data-i18n="field3Label"></span>
-            </label>
-            <div class="field-hint" data-i18n="field3Hint"></div>
-            <div class="axis-group">
-              <label><input type="checkbox" name="axis" value="behavior" /> <span data-i18n="field3OptBehavior"></span></label>
-              <label><input type="checkbox" name="axis" value="knowledge" /> <span data-i18n="field3OptKnowledge"></span></label>
-              <label><input type="checkbox" name="axis" value="scaffold" /> <span data-i18n="field3OptScaffold"></span></label>
+            <label class="field-label" for="f-baseline"><span class="field-index">[3/7]</span> <span data-i18n="f3Label"></span></label>
+            <div class="field-hint" data-i18n="f3Hint"></div>
+            <textarea id="f-baseline" rows="3" maxlength="600" data-i18n-ph="f3Ph"></textarea>
+          </div>
+          <div class="field">
+            <label class="field-label" for="f-evaluation"><span class="field-index">[4/7]</span> <span data-i18n="f4Label"></span></label>
+            <div class="field-hint" data-i18n="f4Hint"></div>
+            <textarea id="f-evaluation" rows="3" maxlength="600" data-i18n-ph="f4Ph"></textarea>
+          </div>
+          <div class="field">
+            <label class="field-label" for="f-plan"><span class="field-index">[5/7]</span> <span data-i18n="f5Label"></span></label>
+            <div class="field-hint" data-i18n="f5Hint"></div>
+            <textarea id="f-plan" rows="5" maxlength="1000" data-i18n-ph="f5Ph"></textarea>
+          </div>
+          <div class="field">
+            <label class="field-label"><span class="field-index">[6/7]</span> <span data-i18n="f6Label"></span></label>
+            <div class="field-hint" data-i18n="f6Hint"></div>
+            <div class="field-pair">
+              <label class="field-sub-label" for="f-gpu-trial" data-i18n="f6Trial"></label>
+              <input id="f-gpu-trial" type="number" min="1" step="1" />
+              <label class="field-sub-label" for="f-gpu-full" data-i18n="f6Full"></label>
+              <input id="f-gpu-full" type="number" min="1" step="1" />
             </div>
           </div>
-
           <div class="field">
-            <label class="field-label" for="f-plan">
-              <span class="field-index">[4/7]</span>
-              <span data-i18n="field4Label"></span>
-            </label>
-            <div class="field-hint" data-i18n="field4Hint"></div>
-            <textarea
-              id="f-plan"
-              name="plan"
-              rows="8"
-              maxlength="4000"
-              required
-              data-i18n-ph="field4Ph"
-            ></textarea>
+            <label class="field-label"><span class="field-index">[7/7]</span> <span data-i18n="f7Label"></span></label>
+            <div class="field-hint" data-i18n="f7Hint"></div>
+            <label class="field-sub-label" for="f-portfolio" data-i18n="f7Portfolio"></label>
+            <input id="f-portfolio" type="url" maxlength="300" data-i18n-ph="f7PortfolioPh" />
+            <label class="field-sub-label" for="f-contact" data-i18n="f7Contact"></label>
+            <input id="f-contact" type="text" maxlength="100" data-i18n-ph="f7ContactPh" />
           </div>
-
-          <div class="field">
-            <label class="field-label" for="f-endpoint">
-              <span class="field-index">[5/7]</span>
-              <span data-i18n="field5Label"></span>
-            </label>
-            <div class="field-hint" data-i18n="field5Hint"></div>
-            <input
-              id="f-endpoint"
-              name="endpoint"
-              type="url"
-              maxlength="500"
-              required
-              data-i18n-ph="field5Ph"
-            />
-            <label class="field-sub-label" for="f-repo" data-i18n="field5Repo"></label>
-            <input id="f-repo" name="repo" type="url" maxlength="500" required data-i18n-ph="field5RepoPh" />
-          </div>
-
-          <div class="field">
-            <label class="field-label" for="f-baseline">
-              <span class="field-index">[6/7]</span>
-              <span data-i18n="field6Label"></span>
-            </label>
-            <div class="field-hint" data-i18n="field6Hint"></div>
-            <input id="f-baseline" name="baselineEndpoint" type="url" maxlength="500" required data-i18n-ph="field6Ph" />
-            <label class="field-sub-label" for="f-baseline-repo" data-i18n="field6Repo"></label>
-            <input id="f-baseline-repo" name="baselineRepo" type="url" maxlength="500" required data-i18n-ph="field6RepoPh" />
-          </div>
-
-          <div class="field">
-            <label class="field-label" for="f-contact">
-              <span class="field-index">[7/7]</span>
-              <span data-i18n="field7Label"></span>
-            </label>
-            <div class="field-hint" data-i18n="field7Hint"></div>
-            <input
-              id="f-contact"
-              name="contact"
-              type="text"
-              maxlength="200"
-              required
-              data-i18n-ph="field7Ph"
-            />
-          </div>
-
-          <div class="field consent">
-            <label>
-              <input id="f-consent" type="checkbox" required />
-              <span data-i18n="consent"></span>
-            </label>
-          </div>
-
           <div class="submit-row">
-            <button type="button" class="submit-btn" id="submit-button">
+            <button type="submit" class="submit-btn" id="apply-button">
               <span class="submit-sigil">&gt;</span>
-              <span data-i18n="submitButton"></span>
+              <span id="apply-button-label" data-i18n="applyButton"></span>
               <span class="cursor-static">_</span>
             </button>
           </div>
+          <div id="apply-feedback" class="submit-feedback" aria-live="polite"></div>
+        </form>
 
-          <div id="submit-feedback" class="submit-feedback" aria-live="polite"></div>
+        <form id="result-form" class="submit-form" novalidate hidden>
+          <h3 class="result-title" data-i18n="resultTitle"></h3>
+          <div class="field">
+            <label class="field-label" for="r-repo"><span class="field-index">[1/3]</span> <span data-i18n="r1Label"></span></label>
+            <input id="r-repo" type="url" maxlength="300" placeholder="https://github.com/..." />
+          </div>
+          <div class="field">
+            <label class="field-label" for="r-log"><span class="field-index">[2/3]</span> <span data-i18n="r2Label"></span></label>
+            <div class="field-hint" data-i18n="r2Hint"></div>
+            <input id="r-log" type="url" maxlength="300" />
+          </div>
+          <div class="field">
+            <label class="field-label" for="r-numbers"><span class="field-index">[3/3]</span> <span data-i18n="r3Label"></span></label>
+            <div class="field-hint" data-i18n="r3Hint"></div>
+            <textarea id="r-numbers" rows="4" maxlength="800"></textarea>
+            <label class="field-sub-label" for="r-note" data-i18n="r4Label"></label>
+            <textarea id="r-note" rows="2" maxlength="800"></textarea>
+          </div>
+          <div class="submit-row">
+            <button type="submit" class="submit-btn" id="result-button">
+              <span class="submit-sigil">&gt;</span>
+              <span data-i18n="resultButton"></span>
+              <span class="cursor-static">_</span>
+            </button>
+          </div>
+          <div id="result-feedback" class="submit-feedback" aria-live="polite"></div>
         </form>
       </section>
 
       <!-- LEDGER -->
       <section id="ledger" class="section">
         <div class="section-meta">
-          <span class="section-num">06</span>
+          <span class="section-num">05</span>
           <span class="section-label" data-i18n="ledgerLabel"></span>
         </div>
         <h2 class="section-title" data-i18n="ledgerTitle"></h2>
@@ -287,14 +213,13 @@
         <a href="https://joulebeat.com/" style="color: inherit">A JOULEBEAT PROJECT — JOULEBEAT.COM</a>
       </div>
     </footer>
-
     <script src="./assets/app.js" defer></script>
     <script
       src="./assets/ledger.js"
       defer
       data-ledger-repo="Protocol-zero-0/token-ignition-ledger"
       data-branch="main"
-      data-poll-seconds="10"
+      data-poll-seconds="30"
       data-show-recent="10"
     ></script>
   </body>

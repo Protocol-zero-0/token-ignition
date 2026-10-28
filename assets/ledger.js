@@ -47,6 +47,13 @@
     advanced: "ADVANCED",
     ignited: "IGNITED",
     rejected: "REJECTED",
+    pass: "TRIAL",
+    revise: "REVISE",
+    reject: "REJECTED",
+    result_pending: "RESULTS",
+    result_revise: "REVISE",
+    full: "FULL",
+    result_reject: "REJECTED",
   };
 
   function escapeHtml(s) {

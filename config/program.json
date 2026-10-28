@@ -1,0 +1,106 @@
+{
+  "version": 3,
+  "note": "Edit this file to change funded directions, quotas and intake limits. The page, the apply API and the AI reviewer all read it.",
+  "limits": {
+    "daily_intake": 50,
+    "new_application_every_days": 7,
+    "max_revisions": 3,
+    "min_github_account_age_days": 30,
+    "trial_gpu_hours_max": 200,
+    "full_gpu_hours_max": 5000
+  },
+  "quota": {
+    "trial": {
+      "zh": "试跑额度：够跑通你计划里最小的那个实验。",
+      "en": "Trial quota: enough to run the smallest experiment in your plan."
+    },
+    "full": {
+      "zh": "完整额度：按你申请的计划给。",
+      "en": "Full quota: sized to the plan you proposed."
+    },
+    "research": {
+      "zh": "成果突出的，长期给卡，邀请加入研究组。",
+      "en": "Standout results get long-term compute and an invitation to the research group."
+    }
+  },
+  "directions": [
+    {
+      "id": "eval",
+      "active": true,
+      "zh": {
+        "title": "评测与 benchmark",
+        "desc": "怎么衡量 AI 做研究、改进自己的能力。",
+        "examples": ["研究型任务的评测集", "自我改进速度的度量", "防刷分、防作弊的评测设计"]
+      },
+      "en": {
+        "title": "Evaluation & benchmarks",
+        "desc": "Measuring how well AI does research and improves itself.",
+        "examples": ["Eval sets built from research tasks", "Metrics for self-improvement speed", "Eval designs that resist gaming"]
+      }
+    },
+    {
+      "id": "harness",
+      "active": true,
+      "zh": {
+        "title": "Harness 自进化",
+        "desc": "让 agent 外面那层框架，在真实任务上自己变强。",
+        "examples": ["自动改提示词、工具和流程", "失败记录驱动的迭代", "改进能否跨模型、跨任务迁移"]
+      },
+      "en": {
+        "title": "Self-evolving harnesses",
+        "desc": "Agent scaffolds that get better on real tasks by themselves.",
+        "examples": ["Auto-editing prompts, tools and workflows", "Iteration driven by failure logs", "Does the gain transfer across models and tasks"]
+      }
+    },
+    {
+      "id": "weights",
+      "active": true,
+      "zh": {
+        "title": "把能力训进模型",
+        "desc": "把 harness 学到的东西，压进模型权重。",
+        "examples": ["轨迹蒸馏", "后训练和强化学习", "去掉 harness 后能力还剩多少"]
+      },
+      "en": {
+        "title": "Training it into the weights",
+        "desc": "Compressing what the harness learned into model weights.",
+        "examples": ["Trajectory distillation", "Post-training and RL", "How much survives once the harness is removed"]
+      }
+    },
+    {
+      "id": "science",
+      "active": true,
+      "zh": {
+        "title": "AI 做科研",
+        "desc": "让 AI 自己提出、执行、验证研究想法。",
+        "examples": ["自动跑实验", "判断研究结论对不对的验证器", "从论文到可复现结果"]
+      },
+      "en": {
+        "title": "AI that does research",
+        "desc": "AI that proposes, runs and verifies research ideas.",
+        "examples": ["Automated experiments", "Verifiers for research claims", "From paper to reproducible result"]
+      }
+    },
+    {
+      "id": "other",
+      "active": true,
+      "zh": {
+        "title": "其他：让 AI 自己变强",
+        "desc": "不在上面，但属于这个大方向的，也欢迎。",
+        "examples": []
+      },
+      "en": {
+        "title": "Other: making AI improve itself",
+        "desc": "Not listed above but within this frame? Also welcome.",
+        "examples": []
+      }
+    }
+  ],
+  "review_gates": [
+    { "id": "direction", "zh": "方向符合", "en": "Fits a funded direction" },
+    { "id": "baseline", "zh": "基线公开、可追溯", "en": "Public, traceable baseline" },
+    { "id": "metric", "zh": "指标能用程序验证", "en": "Machine-checkable metric" },
+    { "id": "feasibility", "zh": "计划和算力匹配", "en": "Plan matches compute" },
+    { "id": "applicant", "zh": "申请人能力匹配", "en": "Applicant fit" },
+    { "id": "value", "zh": "对方向的价值", "en": "Value to the direction" }
+  ]
+}

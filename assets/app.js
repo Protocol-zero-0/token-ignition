@@ -1,310 +1,304 @@
 /* ============================================================
-   TOKEN-IGNITION — front-end v2
-   - scrollable academic layout
-   - hybrid terminal aesthetic + real form inputs
-   - bilingual EN / ZH
-   - procedural ASCII hero art
-   - background node topology
+   TOKEN-IGNITION — front-end v3 (GPU applications)
+   - directions, quotas and limits come from /config/program.json
+   - apply form (7 fields) -> /api/apply, status + AI review -> /api/my
+   - bilingual ZH / EN, procedural ASCII hero, background topology
    ============================================================ */
 
 (() => {
   "use strict";
 
-  /* --------------------------------------------------------------
-     i18n
-     -------------------------------------------------------------- */
-
   const I18N = {
-    en: {
-      brand: "TOKEN-IGNITION // RESEARCH SELECTION",
+    zh: {
+      brand: "TOKEN-IGNITION // 算力资助",
+      heroSubtitle: "我们出 GPU，你来做让 AI 自己变强的研究。",
+      heroFacts: ["免费 GPU，通过评审即发", "方向是一个框，题目你自己定", "约 15 分钟提交，AI 逐项评审"],
+      heroCTA: "↓ 申请算力",
+      heroCTA2: "看方向",
 
-      heroSubtitle: "The entry gate to the Ladder Plan",
-      heroHook: "Token is to cognition what joule is to energy. The bottleneck is no longer the model. It is architecture.",
-      heroTagline:
-        "We are looking for people who can bind 10^9-10^12 tokens to one complex goal. Submit a scaffold that evolves itself, beats its own ablation, and turns larger token budgets into reliable cognitive work.",
-      heroCTA: "↓  enter the gate",
-      scrollHint: "scroll to read how selection works",
+      dirLabel: "方向",
+      dirTitle: "当前资助的方向",
+      dirIntro: "在这个框里，题目你自己定。下面的例子只是参考。",
 
-      manifestoLabel: "manifesto",
-      manifestoTitle: "THE LADDER PLAN",
-      manifestoBody: `
-        <p>Most AI agents still operate around 10^4-10^6 tokens. The Ladder Plan studies how to constrain 10^9-10^12 tokens toward a single complex objective: weeks or months of ordered execution with minimal human intervention, verification, and rollback.</p>
-        <p class="dim">Token-Ignition is the selection gate for that work. We do not screen for legibility. We ask for an artifact: a scaffold that can evolve across runs and prove its delta against a minimal ablation.</p>
-      `,
-
-      protocolLabel: "protocol",
-      protocolTitle: "META-RULES",
-      protocolItems: [
-        ["R1", "You define a long-horizon task that requires a scaffold, not a one-shot prompt."],
-        ["R2", "You define the evaluation criterion. It must be reproducible and machine-verifiable."],
-        ["R3", "You build the scaffold. The scaffold — not you — produces the final output."],
-        ["R4", "All submissions are AI-judged. Human audit is random and post-hoc."],
-        ["R5", "Identity is irrelevant. Submissions are accepted under pseudonym."],
-        ["R6", "Selection is gated. Pass a gate, unlock more resources. Pass the final gate, join the research."],
-        ["R7", "Ablation is required: same model, same task, minimal scaffold. The delta is the evidence."],
+      flowLabel: "流程",
+      flowTitle: "从申请到拿卡",
+      flowItems: [
+        ["申请", "GitHub 登录，填 7 项，每项一两句。"],
+        ["AI 评审", "逐项给出通过或需修改，并写明怎么改。可以在原申请上改，最多改 3 次。"],
+        ["试跑", "通过后，我们按你留的联系方式发一个带额度的容器账号。"],
+        ["交成果", "公开仓库、一份运行记录、和基线对比的数字。"],
+        ["完整额度", "复审通过，按你的计划给卡。成果突出的，长期给卡、邀请加入研究组。"],
       ],
+      tierKeys: ["gate.1 试跑", "gate.2 完整", "gate.3 研究组"],
 
-      rulesLabel: "submission requirements",
-      rulesTitle: "WHAT COUNTS AS A VALID SUBMISSION",
-      rulesItems: [
-        {
-          head: "01 // Self-evolution, not prompt-engineering.",
-          body: [
-            "The system must modify its own behavior across iterations",
-            "without human edits to prompts, weights, or code between runs.",
-          ],
-        },
-        {
-          head: "02 // Machine-verifiable output.",
-          body: [
-            "The evaluation criterion must be checkable by an AI auditor",
-            "with no proprietary access — public endpoint, public artifact.",
-          ],
-        },
-        {
-          head: "03 // Live, AI-readable endpoint.",
-          body: [
-            "You must provide a URL an AI can crawl. HTML is fine.",
-            "JSON / OpenAPI / plain text are better. Logins, captchas, GUIs are not accepted.",
-          ],
-        },
-        {
-          head: "04 // Reproducibility micro-run.",
-          body: [
-            "Attach at least one log of a full run: inputs, intermediate state,",
-            "final artifact hash. Our auditor re-runs a randomly sampled slice.",
-          ],
-        },
-      ],
-      rulesCalloutHead: "// AUDIT NOTE",
-      rulesCalloutBody:
-        "If the AI auditor cannot independently verify your artifact, the submission is rejected. We do not email you for clarifications. The endpoint is the application.",
+      reviewLabel: "评审",
+      reviewTitle: "AI 评审看这 6 项",
+      reviewIntro: "每一项都会回一句证据和一句修改建议，结果显示在你的申请状态里。",
 
-      allocationLabel: "the three gates",
-      allocationTitle: "HOW SELECTION WORKS",
-      allocation1Note:
-        "Admission tier. Any well-formed submission receives a 1M token budget to run and prove its system.",
-      allocation2Note:
-        "Verified tier. Unlocked when the AI auditor confirms reproducible self-evolution on your gate.1 artifact.",
-      allocation3Note:
-        "Research tier. Unlocked when emergent behavior — absent in the initial system — is verified by consensus of ≥3 independent models. Gate.3 clearance is a standing invitation to join the research group.",
+      applyLabel: "申请",
+      applyTitle: "申请算力",
+      applyIntro: "先用 GitHub 登录。注册不满 30 天的账号暂不接收。",
+      authLogin: "用 GitHub 登录",
+      authLogout: "退出",
+      authRequired: "提交前需要先用 GitHub 登录。",
+      authSignedIn: (login) => `已登录：${login}`,
+      authUnavailable: "登录服务暂时不可用，请稍后再试。",
 
-      submitLabel: "submission",
-      submitTitle: "APPLY BY SUBMITTING",
-      submitIntro:
-        "Seven fields. GitHub sign-in may be required before submission. Your entry is hashed and appended to a public ledger. Review starts from pending and can advance through the gates.",
-      authRequired: "Submissions currently require GitHub sign-in.",
-      authOptional: "GitHub sign-in is available. It may become required as the audit queue opens.",
-      authConfiguredMissing: "Submission guard is enabled but GitHub auth is not configured.",
-      authLogin: "Continue with GitHub",
-      authLogout: "sign out",
-      authSignedIn: (login) => `Signed in as @${login}`,
-      submitStateSending: "Submitting to the audit queue...",
-      submitStateSuccess: (id) => `Submission accepted.\nsubmission_id: ${id}\nstatus: pending`,
-      submitStateError: (msg) => `Submission failed.\n${msg}`,
-      submitStateLedger: "Open ledger record",
-      field1Label: "task.definition",
-      field1Hint:
-        "What does the system have to do? One paragraph. Must be testable.",
-      field1Ph:
-        "e.g. Given a stream of unlabeled numerical sequences, the system must autonomously discover a compression scheme and reconstruct the originals within tolerance ε.",
-      field2Label: "verification.criterion",
-      field2Hint:
-        "How will an AI auditor know you passed? Give the exact check.",
-      field2Ph:
-        "e.g. Auditor fetches /benchmark → receives JSON { inputs[], outputs[] }. Passes if L2 error < 0.01 on all held-out inputs and compression ratio > 8x.",
-      field3Label: "evolution.axes",
-      field3Hint: "Which axis changes across runs without human edits? Scaffold-level evolution carries the highest weight.",
-      field3OptBehavior: "behavior",
-      field3OptKnowledge: "knowledge",
-      field3OptScaffold: "scaffold",
-      field4Label: "execution.plan",
-      field4Hint: "How does the scaffold evolve itself? What loop, signal, memory, or toolchain changes?",
-      field4Ph: "Describe what the scaffold observes, how it updates itself, how it decides to stop, and what is different in the next run.",
-      field5Label: "scaffold.artifact",
-      field5Hint: "A live endpoint an AI can hit now, plus a public GitHub repository.",
-      field5Ph: "https://…/benchmark",
-      field5Repo: "scaffold.repo",
-      field5RepoPh: "https://github.com/owner/scaffold",
-      field6Label: "ablation.artifact",
-      field6Hint: "Same model, same task, minimal scaffold. This is how we measure the delta.",
-      field6Ph: "https://…/baseline",
-      field6Repo: "ablation.repo",
-      field6RepoPh: "https://github.com/owner/baseline",
-      field7Label: "contact.handle",
-      field7Hint:
-        "A pseudonym is fine. We only use it to notify you when a gate opens.",
-      field7Ph: "e.g. @handle on X, discord username, or email",
+      helperSummary: "不想自己写？用你自己的 AI 帮你起草",
+      helperIntro: "把下面这段复制到 ChatGPT、Claude 或任何你常用的 AI 里，回答它的追问，再把结果填进表单。",
+      helperCopy: "复制提示词",
+      helperCopied: "已复制",
+      helperPrompt: (dirs) => `你是我的研究申请助手。我要申请 Token Ignition 的免费 GPU，做"让 AI 自己变强"方向的研究。
+可选方向：${dirs}。
+请一次问我一个问题，帮我把想法整理成下面 7 项，每项一两句，最后按顺序输出：
+1. 方向：从上面选一个
+2. 研究问题：一句话说清要验证什么
+3. 基线：从哪个公开项目、模型或结果出发，给链接和版本
+4. 评测：用什么指标、在什么数据上算，必须能用程序算出来
+5. 两周计划：做什么；成功会看到什么，失败会看到什么
+6. 算力：试跑要多少 GPU 卡时，完整要多少
+7. 代表作：一个论文、仓库或比赛的链接
+如果我的想法里基线不公开、指标没法用程序算，请直接指出并帮我改。`,
 
-      consent:
-        "I confirm my submission is my own work, both endpoints are live, and I accept AI-judged, non-negotiable evaluation.",
-      submitButton: "submit",
+      f1Label: "方向",
+      f1Hint: "选一个最接近的。",
+      f2Label: "研究问题",
+      f2Hint: "一句话说清你想验证什么。",
+      f2Ph: "例：自动改写工具调用流程，能否让同一个 7B 模型在 SWE 类任务上的通过率提升 5 个点以上？",
+      f3Label: "基线",
+      f3Hint: "从哪个公开项目、模型或结果出发。给链接和版本。",
+      f3Ph: "例：https://github.com/... @ commit abc123，原论文报告的分数 41.0%",
+      f4Label: "评测",
+      f4Hint: "用什么指标、在什么数据上算。必须能用程序算出来。",
+      f4Ph: "例：在公开测试集的留出部分上算通过率，脚本自动判分。",
+      f5Label: "两周计划",
+      f5Hint: "做什么；成功会看到什么，失败会看到什么。",
+      f5Ph: "第 1 周复现基线……第 2 周……成功：……失败：……",
+      f6Label: "算力",
+      f6Hint: "用 GPU 卡时估算即可。",
+      f6Trial: "试跑（卡时）",
+      f6Full: "完整（卡时）",
+      f7Label: "你是谁",
+      f7Hint: "GitHub 账号会自动带上。再给一个代表作，和一个我们能联系到你的方式。",
+      f7Portfolio: "代表作链接（论文、仓库或比赛）",
+      f7PortfolioPh: "https://...",
+      f7Contact: "联系方式（只用于发容器账号，不公开）",
+      f7ContactPh: "邮箱 / 微信 / 小红书号",
+      applyButton: "提交申请",
+      reviseButton: "提交修改",
 
-      footLeft: "TOKEN-IGNITION  //  RESEARCH SELECTION  //  v0.1",
-      footRight: "RESEARCH HOST: JOULE RESEARCH",
+      resultTitle: "交成果，申请完整额度",
+      r1Label: "公开仓库",
+      r2Label: "运行记录",
+      r2Hint: "一份完整运行的日志或报告链接。",
+      r3Label: "关键数字",
+      r3Hint: "和基线对比的结果，写清在什么数据上、怎么算的。",
+      r4Label: "补充说明（可选）",
+      resultButton: "提交成果",
 
-      ledgerLabel: "ledger",
-      ledgerTitle: "RECENT APPLICATIONS",
-      ledgerIntro:
-        "Every application is stored as a hash on a public repository. No personal data is published.",
-
-      feedback: {
-        authRequired: "[reject] GitHub sign-in required before submitting.",
-        missing: "[reject] missing required fields. check highlighted items.",
-        noAxis: "[reject] evolution.axes must have at least one selected.",
-        badUrl:
-          "[reject] scaffold endpoint must be a valid URL — our auditor has to crawl it.",
-        badBaseline: "[reject] ablation endpoint must be a valid URL.",
-        badRepo: "[reject] scaffold.repo must be a public github.com URL.",
-        badBaselineRepo: "[reject] ablation.repo must be a public github.com URL.",
-        ok: (hash) =>
-          `[accept] entry ${hash} queued.\nAI audit window: 24h.\nYou will not receive a confirmation email. Watch the ledger.`,
+      statusTitle: "我的申请",
+      statusLabels: {
+        pending: "评审中",
+        revise: "需修改",
+        pass: "已通过 · 试跑",
+        reject: "未通过",
+        result_pending: "成果评审中",
+        result_revise: "成果需修改",
+        full: "已通过 · 完整额度",
+        result_reject: "成果未通过",
       },
+      statusNext: {
+        pending: "AI 评审通常在 24 小时内完成，结果会显示在这里。",
+        revise: (left) => `按下面的意见修改后重新提交，还可以改 ${left} 次。`,
+        pass: "我们会按你留的联系方式发试跑用的容器账号。跑完后在下面交成果。",
+        reject: "这次没有通过。7 天后可以提交新的申请。",
+        result_pending: "成果评审中，结果会显示在这里。",
+        result_revise: (left) => `按意见修改成果后重新提交，还可以改 ${left} 次。`,
+        full: "我们会联系你发放完整额度。",
+        result_reject: "这次成果没有通过。7 天后可以提交新的申请。",
+      },
+      verdictLabels: { pass: "通过", revise: "需修改", reject: "未通过" },
+      valueLabels: { high: "高", medium: "中", low: "低" },
+      reviewOf: (stage) => (stage === "result" ? "成果评审" : "申请评审"),
+      gatePass: "通过",
+      gateFail: "需改",
+
+      sending: "提交中……",
+      okSent: "已提交，进入评审队列。",
+      errors: {
+        "github sign-in required": "请先用 GitHub 登录。",
+        github_account_too_new: "GitHub 账号注册不满 30 天，暂不接收。",
+        github_lookup_failed: "暂时查不到你的 GitHub 信息，请稍后再试。",
+        already_in_review: "你已有一份申请在评审中。",
+        submit_results_instead: "你的申请已通过，请在下方交成果。",
+        too_soon: "7 天内只能提交一次新申请。",
+        revision_limit_reached: "修改次数已用完。",
+        daily_intake_full: "今天的申请名额满了，请明天再来。",
+        no_passed_application: "需要先有一份通过的申请。",
+        "rate limit exceeded": "提交太频繁，请稍后再试。",
+        invalid: "有几项没填好，请检查标红的地方。",
+      },
+      fieldErrors: {
+        direction: "请选方向", question: "研究问题 10–300 字", baseline: "基线需要带链接",
+        evaluation: "评测 10–600 字", plan: "计划 20–1000 字", gpu_trial: "试跑卡时不在范围内",
+        gpu_full: "完整卡时需不少于试跑、且在上限内", portfolio: "代表作需要是链接", contact: "请留联系方式",
+        repo: "需要 GitHub 仓库链接", log: "运行记录需要是链接", numbers: "关键数字 10–800 字", note: "补充说明过长",
+      },
+
+      ledgerLabel: "公开账本",
+      ledgerTitle: "所有申请都记在这里",
+      ledgerIntro: "账本只记编号、方向和状态，不公开申请内容和个人信息。",
+      footLeft: "TOKEN-IGNITION // 算力资助 // v3",
+      footRight: "RESEARCH HOST: JOULE RESEARCH",
     },
 
-    zh: {
-      brand: "TOKEN-IGNITION // 研究员筛选",
+    en: {
+      brand: "TOKEN-IGNITION // COMPUTE GRANTS",
+      heroSubtitle: "We provide the GPUs. You do research on AI that improves itself.",
+      heroFacts: ["Free GPUs once you pass review", "Directions are a frame, you pick the problem", "About 15 minutes to apply, reviewed item by item by AI"],
+      heroCTA: "↓ apply for compute",
+      heroCTA2: "see directions",
 
-      heroSubtitle: "天梯计划的入口",
-      heroHook: "Token 之于认知,正如焦耳之于能量。瓶颈不再只是模型,而是架构。",
-      heroTagline:
-        "我们在寻找能把 10^9-10^12 量级 Token 约束到单一复杂目标上的人。提交一个会自我进化的脚手架,证明它能打过自己的消融基线,把更大 Token 预算转化为可靠的认知工作。",
-      heroCTA: "↓  进入申请",
-      scrollHint: "向下滚动,了解筛选机制",
+      dirLabel: "directions",
+      dirTitle: "Directions we fund now",
+      dirIntro: "Pick your own problem inside this frame. The examples are only hints.",
 
-      manifestoLabel: "宣言",
-      manifestoTitle: "天梯计划",
-      manifestoBody: `
-        <p>绝大多数 AI Agent 仍运行在 10^4-10^6 Token 量级。天梯计划研究如何把 10^9-10^12 量级 Token 有效约束于单一复杂目标:数周、数月、极少人工干预、可验证、可回滚的有序执行。</p>
-        <p class="dim">Token-Ignition 是进入这项工作的筛选门。我们不筛选简历的可读性,我们筛选产物:一个能跨运行自我进化,并能相对最小消融基线证明增量的脚手架。</p>
-      `,
-
-      protocolLabel: "协议",
-      protocolTitle: "元规则",
-      protocolItems: [
-        ["R1", "你定义一个长跨度任务。它必须要求脚手架,而不是一次性 prompt。"],
-        ["R2", "你定义评估标准。标准必须可复现、可被机器验证。"],
-        ["R3", "你构建脚手架。最终产出来自脚手架,不是来自你。"],
-        ["R4", "所有提交由 AI 评判。人工审计是随机抽查,事后进行。"],
-        ["R5", "身份无关。允许使用化名提交。"],
-        ["R6", "筛选分档。通过一档,解锁更多资源;通过最终档,进入研究组。"],
-        ["R7", "必须提供消融对照:同模型、同任务、最小脚手架。差值即证据。"],
+      flowLabel: "flow",
+      flowTitle: "From application to GPUs",
+      flowItems: [
+        ["Apply", "Sign in with GitHub and fill 7 short fields."],
+        ["AI review", "Each item is marked pass or needs changes, with how to fix it. Revise in place, up to 3 times."],
+        ["Trial", "Once passed, we send a container account with quota to the contact you left."],
+        ["Results", "A public repo, one run log, and numbers against the baseline."],
+        ["Full quota", "Pass the second review and get compute for your full plan. Standout work gets long-term compute and an invitation to the research group."],
       ],
+      tierKeys: ["gate.1 trial", "gate.2 full", "gate.3 research"],
 
-      rulesLabel: "提交要求",
-      rulesTitle: "怎样才算一个有效提交",
-      rulesItems: [
-        {
-          head: "01 // 必须是自我进化,而不是 prompt 工程。",
-          body: [
-            "系统在多轮迭代间必须自行修改自身行为,",
-            "而非由人手动改 prompt、改权重或改代码。",
-          ],
-        },
-        {
-          head: "02 // 机器可验证的输出。",
-          body: [
-            "评估标准必须允许 AI 审计在无专有接口的情况下独立核对——",
-            "公开端点,公开产物。",
-          ],
-        },
-        {
-          head: "03 // 活的、AI 可读的端点。",
-          body: [
-            "你必须提供一个 AI 能直接访问的 URL。HTML 也可以,",
-            "JSON / OpenAPI / 纯文本更好。登录、验证码、纯图形界面不接受。",
-          ],
-        },
-        {
-          head: "04 // 可复现的最小运行记录。",
-          body: [
-            "至少附一段完整运行日志:输入、中间状态、最终产物哈希。",
-            "我们的审计器会随机抽一小段重跑。",
-          ],
-        },
-      ],
-      rulesCalloutHead: "// 审计说明",
-      rulesCalloutBody:
-        "如果 AI 审计无法独立验证你的产物,提交将被驳回。我们不会发邮件追问——端点本身就是申请书。",
+      reviewLabel: "review",
+      reviewTitle: "What the AI reviewer checks",
+      reviewIntro: "Each item comes back with one line of evidence and one line on how to fix it, shown in your application status.",
 
-      allocationLabel: "三道门",
-      allocationTitle: "筛选机制",
-      allocation1Note:
-        "入围档。任何合规提交即获得 1M token 预算,用于让系统跑起来、自证能力。",
-      allocation2Note:
-        "验证档。当 AI 审计确认 gate.1 的产物具备可复现的自我进化,解锁。",
-      allocation3Note:
-        "研究档。当产物出现初始系统所不具备的涌现行为,并由 ≥3 个独立模型共识验证,解锁。通过 gate.3,就是进入研究组的长期邀请。",
+      applyLabel: "apply",
+      applyTitle: "Apply for compute",
+      applyIntro: "Sign in with GitHub first. Accounts younger than 30 days are not accepted yet.",
+      authLogin: "sign in with GitHub",
+      authLogout: "sign out",
+      authRequired: "GitHub sign-in is required before you apply.",
+      authSignedIn: (login) => `signed in as ${login}`,
+      authUnavailable: "Sign-in is temporarily unavailable. Please try again later.",
 
-      submitLabel: "申请",
-      submitTitle: "提交即申请",
-      submitIntro:
-        "七个字段。提交前可能需要 GitHub 登录。提交会被哈希后写入公开账本,先进入 pending,再沿着门槛推进。",
-      authRequired: "当前评审提交仅接受 GitHub 登录用户。",
-      authOptional: "GitHub 登录已经可用。审计队列开放后可能会强制要求登录。",
-      authConfiguredMissing: "提交风控已启用,但 GitHub 登录尚未配置。",
-      authLogin: "使用 GitHub 登录",
-      authLogout: "退出",
-      authSignedIn: (login) => `已使用 GitHub 登录:@${login}`,
-      submitStateSending: "正在提交到审计队列...",
-      submitStateSuccess: (id) => `提交已确认。\nsubmission_id: ${id}\nstatus: pending`,
-      submitStateError: (msg) => `提交失败。\n${msg}`,
-      submitStateLedger: "打开账本记录",
-      field1Label: "task.definition",
-      field1Hint: "系统要做什么?一段话。必须可测试。",
-      field1Ph:
-        "例:给定一串无标注的数值序列,系统需自主发现一种压缩方案,并在误差 ε 内重建原序列。",
-      field2Label: "verification.criterion",
-      field2Hint: "AI 审计怎么判断你通过了?给出确切的校验方式。",
-      field2Ph:
-        "例:审计器访问 /benchmark → 返回 JSON { inputs[], outputs[] }。若在全部留出输入上 L2 误差 < 0.01 且压缩比 > 8x,即为通过。",
-      field3Label: "evolution.axes",
-      field3Hint: "你的脚手架在哪条轴上跨运行改变?脚手架层级的自我修改权重最高。",
-      field3OptBehavior: "行为",
-      field3OptKnowledge: "知识",
-      field3OptScaffold: "脚手架",
-      field4Label: "execution.plan",
-      field4Hint: "脚手架如何自我进化?循环、信号、记忆、工具链分别如何变化?",
-      field4Ph:
-        "描述脚手架观察什么、如何更新自己、如何停止,以及下一次运行具体哪里不同。",
-      field5Label: "scaffold.artifact",
-      field5Hint: "一个 AI 现在就能访问的端点,加一个公开 GitHub 仓库。",
-      field5Ph: "https://…/benchmark",
-      field5Repo: "scaffold.repo",
-      field5RepoPh: "https://github.com/owner/scaffold",
-      field6Label: "ablation.artifact",
-      field6Hint: "同模型、同任务、最小脚手架。我们用它衡量你的增量。",
-      field6Ph: "https://…/baseline",
-      field6Repo: "ablation.repo",
-      field6RepoPh: "https://github.com/owner/baseline",
-      field7Label: "contact.handle",
-      field7Hint: "化名也可以。仅用于在门槛解锁时通知你。",
-      field7Ph: "例:X 上的 @handle、Discord 用户名或邮箱",
+      helperSummary: "Prefer not to write it yourself? Draft it with your own AI",
+      helperIntro: "Paste this into ChatGPT, Claude or any assistant you use, answer its questions, then copy the result into the form.",
+      helperCopy: "copy prompt",
+      helperCopied: "copied",
+      helperPrompt: (dirs) => `You are my research application assistant. I am applying for free GPUs from Token Ignition to do research on AI that improves itself.
+Directions: ${dirs}.
+Ask me one question at a time and turn my idea into these 7 items, one or two sentences each, then print them in order:
+1. Direction: pick one from the list
+2. Research question: one sentence on what I want to test
+3. Baseline: which public project, model or result I start from, with link and version
+4. Evaluation: which metric on which data; it must be computable by a program
+5. Two-week plan: what I will do; what success looks like, what failure looks like
+6. Compute: GPU hours for a trial run and for the full plan
+7. Portfolio: one link to a paper, repo or competition result
+If my baseline is not public or my metric cannot be computed by a program, tell me and help me fix it.`,
 
-      consent:
-        "我确认这是我本人的作品,两个端点当前可访问,并接受由 AI 评判、不可申诉的评估结果。",
-      submitButton: "提交",
+      f1Label: "direction",
+      f1Hint: "Pick the closest one.",
+      f2Label: "research question",
+      f2Hint: "One sentence on what you want to test.",
+      f2Ph: "e.g. Can automatically rewriting the tool-calling flow raise a 7B model's pass rate on SWE-style tasks by 5+ points?",
+      f3Label: "baseline",
+      f3Hint: "Which public project, model or result you start from. Link and version.",
+      f3Ph: "e.g. https://github.com/... @ commit abc123, paper reports 41.0%",
+      f4Label: "evaluation",
+      f4Hint: "Which metric on which data. It must be computable by a program.",
+      f4Ph: "e.g. pass rate on a held-out split of the public test set, graded by script.",
+      f5Label: "two-week plan",
+      f5Hint: "What you will do; what success looks like, what failure looks like.",
+      f5Ph: "Week 1 reproduce the baseline... Week 2 ... Success: ... Failure: ...",
+      f6Label: "compute",
+      f6Hint: "A rough estimate in GPU hours is fine.",
+      f6Trial: "trial (GPU hours)",
+      f6Full: "full (GPU hours)",
+      f7Label: "about you",
+      f7Hint: "Your GitHub account is attached automatically. Add one piece of work and a way to reach you.",
+      f7Portfolio: "portfolio link (paper, repo or competition)",
+      f7PortfolioPh: "https://...",
+      f7Contact: "contact (only used to send your container account, never published)",
+      f7ContactPh: "email / WeChat / X",
+      applyButton: "submit application",
+      reviseButton: "submit revision",
 
-      footLeft: "TOKEN-IGNITION  //  研究员筛选  //  v0.1",
-      footRight: "研究承载方:JOULE RESEARCH",
+      resultTitle: "Submit results for full quota",
+      r1Label: "public repository",
+      r2Label: "run log",
+      r2Hint: "A link to the log or report of one complete run.",
+      r3Label: "key numbers",
+      r3Hint: "Results against the baseline, with the data and how they were computed.",
+      r4Label: "notes (optional)",
+      resultButton: "submit results",
 
-      ledgerLabel: "账本",
-      ledgerTitle: "近期申请",
-      ledgerIntro: "每条申请以哈希形式写入公开仓库,不发布任何个人信息。",
-
-      feedback: {
-        authRequired: "[reject] 请先使用 GitHub 登录后再提交。",
-        missing: "[reject] 必填字段缺失。请检查标红项。",
-        noAxis: "[reject] evolution.axes 至少选择一项。",
-        badUrl: "[reject] scaffold endpoint 必须是有效 URL——审计器需要抓取它。",
-        badBaseline: "[reject] ablation endpoint 必须是有效 URL。",
-        badRepo: "[reject] scaffold.repo 必须是公开 GitHub URL。",
-        badBaselineRepo: "[reject] ablation.repo 必须是公开 GitHub URL。",
-        ok: (hash) =>
-          `[accept] 条目 ${hash} 已入队。\nAI 审计窗口:24 小时。\n我们不会发确认邮件,请关注账本。`,
+      statusTitle: "my application",
+      statusLabels: {
+        pending: "in review",
+        revise: "needs changes",
+        pass: "passed · trial",
+        reject: "not passed",
+        result_pending: "results in review",
+        result_revise: "results need changes",
+        full: "passed · full quota",
+        result_reject: "results not passed",
       },
+      statusNext: {
+        pending: "AI review usually finishes within 24 hours. The result will show up here.",
+        revise: (left) => `Revise using the notes below and resubmit. ${left} revision(s) left.`,
+        pass: "We will send a trial container account to your contact. When done, submit results below.",
+        reject: "Not passed this time. You can submit a new application after 7 days.",
+        result_pending: "Results in review. The outcome will show up here.",
+        result_revise: (left) => `Revise your results and resubmit. ${left} revision(s) left.`,
+        full: "We will contact you about the full quota.",
+        result_reject: "Results not passed this time. You can submit a new application after 7 days.",
+      },
+      verdictLabels: { pass: "pass", revise: "needs changes", reject: "not passed" },
+      valueLabels: { high: "high", medium: "medium", low: "low" },
+      reviewOf: (stage) => (stage === "result" ? "results review" : "application review"),
+      gatePass: "pass",
+      gateFail: "fix",
+
+      sending: "submitting...",
+      okSent: "Submitted. You are in the review queue.",
+      errors: {
+        "github sign-in required": "Please sign in with GitHub first.",
+        github_account_too_new: "GitHub accounts younger than 30 days are not accepted yet.",
+        github_lookup_failed: "Could not look up your GitHub account. Please try again later.",
+        already_in_review: "You already have an application in review.",
+        submit_results_instead: "Your application passed. Submit results below.",
+        too_soon: "One new application per 7 days.",
+        revision_limit_reached: "No revisions left.",
+        daily_intake_full: "Today's intake is full. Please come back tomorrow.",
+        no_passed_application: "You need a passed application first.",
+        "rate limit exceeded": "Too many attempts. Please try again later.",
+        invalid: "Some fields need attention. Check the highlighted ones.",
+      },
+      fieldErrors: {
+        direction: "pick a direction", question: "10–300 characters", baseline: "include a link",
+        evaluation: "10–600 characters", plan: "20–1000 characters", gpu_trial: "trial hours out of range",
+        gpu_full: "full hours must be ≥ trial and within the cap", portfolio: "must be a link", contact: "leave a contact",
+        repo: "must be a GitHub repo link", log: "must be a link", numbers: "10–800 characters", note: "too long",
+      },
+
+      ledgerLabel: "public ledger",
+      ledgerTitle: "Every application is recorded here",
+      ledgerIntro: "The ledger keeps only the id, direction and status. Application text and personal data are never published.",
+      footLeft: "TOKEN-IGNITION // COMPUTE GRANTS // v3",
+      footRight: "RESEARCH HOST: JOULE RESEARCH",
     },
   };
+
+  /* --------------------------------------------------------------
+     state
+     -------------------------------------------------------------- */
 
   const languageEntry = new URL(location.href);
   const requestedLanguage = languageEntry.searchParams.get("lang");
@@ -312,85 +306,18 @@
   try { savedLanguage = localStorage.getItem("ti.lang"); } catch (_) {}
   const incomingLanguage = requestedLanguage === "en" ? "en" :
     (requestedLanguage === "zh" || requestedLanguage === "zh-CN" ? "zh" : null);
-  let LANG = incomingLanguage || (savedLanguage === "zh" ? "zh" : "en");
+  let LANG = incomingLanguage || (savedLanguage === "en" ? "en" : "zh");
   if (incomingLanguage) {
     try { localStorage.setItem("ti.lang", LANG); } catch (_) {}
     languageEntry.searchParams.delete("lang");
     try { history.replaceState(null, "", languageEntry.pathname + languageEntry.search + languageEntry.hash); } catch (_) {}
   }
-  let AUTH_STATE = {
-    loaded: false,
-    guardEnabled: false,
-    configured: false,
-    user: null,
-  };
 
-  /* --------------------------------------------------------------
-     i18n renderer
-     -------------------------------------------------------------- */
+  let PROGRAM = null;
+  let AUTH = { loaded: false, configured: false, user: null };
+  let APP = null; // current user's application record
 
-  function applyI18n() {
-    const t = I18N[LANG];
-    document.documentElement.lang = LANG === "zh" ? "zh-CN" : "en";
-
-    // text content
-    document.querySelectorAll("[data-i18n]").forEach((el) => {
-      const key = el.getAttribute("data-i18n");
-      if (t[key] !== undefined) {
-        const val = t[key];
-        if (typeof val === "string") {
-          if (val.trim().startsWith("<")) {
-            el.innerHTML = val;
-          } else {
-            el.textContent = val;
-          }
-        }
-      }
-    });
-
-    // placeholders
-    document.querySelectorAll("[data-i18n-ph]").forEach((el) => {
-      const key = el.getAttribute("data-i18n-ph");
-      if (t[key] !== undefined) el.setAttribute("placeholder", t[key]);
-    });
-
-    // protocol list
-    const pList = document.getElementById("protocol-list");
-    if (pList) {
-      pList.innerHTML = t.protocolItems
-        .map(
-          ([k, v]) =>
-            `<li><span class="k">${k}</span><span class="v">${escapeHtml(v)}</span></li>`
-        )
-        .join("");
-    }
-
-    // rules list
-    const rList = document.getElementById("rules-list");
-    if (rList) {
-      rList.innerHTML = t.rulesItems
-        .map(
-          (r) =>
-            `<li>
-               <div class="rule-head">${escapeHtml(r.head)}</div>
-               <div class="rule-body">
-                 ${r.body.map((line) => `<div>${escapeHtml(line)}</div>`).join("")}
-               </div>
-             </li>`
-        )
-        .join("");
-    }
-
-    // lang buttons aria-current
-    document.querySelectorAll(".lang-btn").forEach((b) => {
-      b.setAttribute(
-        "aria-current",
-        b.getAttribute("data-lang") === LANG ? "true" : "false"
-      );
-    });
-
-    renderAuthGate();
-  }
+  const $ = (id) => document.getElementById(id);
 
   function escapeHtml(s) {
     return String(s)
@@ -399,6 +326,336 @@
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;");
   }
+
+  function activeDirections() {
+    return PROGRAM ? PROGRAM.directions.filter((d) => d.active) : [];
+  }
+
+  /* --------------------------------------------------------------
+     render
+     -------------------------------------------------------------- */
+
+  function render() {
+    const t = I18N[LANG];
+    document.documentElement.lang = LANG === "zh" ? "zh-CN" : "en";
+
+    document.querySelectorAll("[data-i18n]").forEach((el) => {
+      const val = t[el.getAttribute("data-i18n")];
+      if (typeof val === "string") el.textContent = val;
+    });
+    document.querySelectorAll("[data-i18n-ph]").forEach((el) => {
+      const val = t[el.getAttribute("data-i18n-ph")];
+      if (typeof val === "string") el.setAttribute("placeholder", val);
+    });
+    document.querySelectorAll(".lang-btn").forEach((b) => {
+      b.setAttribute("aria-current", b.getAttribute("data-lang") === LANG ? "true" : "false");
+    });
+
+    $("hero-facts").innerHTML = t.heroFacts.map((f) => `<li>${escapeHtml(f)}</li>`).join("");
+    $("flow-list").innerHTML = t.flowItems
+      .map(([k, v], i) => `<li><span class="flow-step">${String(i + 1).padStart(2, "0")}</span><span class="flow-k">${escapeHtml(k)}</span><span class="flow-v">${escapeHtml(v)}</span></li>`)
+      .join("");
+
+    if (PROGRAM) {
+      $("dir-grid").innerHTML = activeDirections().map((d) => {
+        const c = d[LANG];
+        const ex = (c.examples || []).map((e) => `<li>${escapeHtml(e)}</li>`).join("");
+        return `<article class="dir-card"><h3>${escapeHtml(c.title)}</h3><p>${escapeHtml(c.desc)}</p>${ex ? `<ul>${ex}</ul>` : ""}</article>`;
+      }).join("");
+
+      const q = PROGRAM.quota;
+      $("tier-grid").innerHTML = [q.trial, q.full, q.research].map((x, i) => `
+        <div class="allocation-cell">
+          <div class="allocation-key">${escapeHtml(t.tierKeys[i])}</div>
+          <div class="allocation-note">${escapeHtml(x[LANG])}</div>
+        </div>`).join("");
+
+      $("gate-list").innerHTML = PROGRAM.review_gates
+        .map((g, i) => `<li><span class="k">${String(i + 1).padStart(2, "0")}</span><span class="v">${escapeHtml(g[LANG])}</span></li>`)
+        .join("");
+
+      const sel = $("f-direction");
+      const current = sel.value;
+      sel.innerHTML = activeDirections().map((d) => `<option value="${escapeHtml(d.id)}">${escapeHtml(d[LANG].title)}</option>`).join("");
+      if (current) sel.value = current;
+
+      const L = PROGRAM.limits;
+      $("f-gpu-trial").max = L.trial_gpu_hours_max;
+      $("f-gpu-full").max = L.full_gpu_hours_max;
+
+      $("helper-prompt").textContent = t.helperPrompt(activeDirections().map((d) => d[LANG].title).join(LANG === "zh" ? "、" : ", "));
+    }
+
+    renderAuth();
+    renderStatus();
+  }
+
+  function renderAuth() {
+    const t = I18N[LANG];
+    const gate = $("auth-gate");
+    const copy = $("auth-gate-copy");
+    $("github-login").hidden = true;
+    $("github-logout").hidden = true;
+    if (!AUTH.loaded) {
+      gate.dataset.state = "loading";
+      copy.textContent = "...";
+      return;
+    }
+    if (!AUTH.configured) {
+      gate.dataset.state = "required";
+      copy.textContent = t.authUnavailable;
+      return;
+    }
+    if (AUTH.user) {
+      gate.dataset.state = "signed-in";
+      copy.textContent = t.authSignedIn(AUTH.user.login);
+      $("github-logout").hidden = false;
+      return;
+    }
+    gate.dataset.state = "required";
+    copy.textContent = t.authRequired;
+    $("github-login").hidden = false;
+  }
+
+  function leftRevisions(used) {
+    return PROGRAM ? Math.max(0, PROGRAM.limits.max_revisions - used) : 0;
+  }
+
+  function renderStatus() {
+    const t = I18N[LANG];
+    const panel = $("status-panel");
+    const applyForm = $("apply-form");
+    const resultForm = $("result-form");
+    const signedIn = Boolean(AUTH.user);
+
+    applyForm.hidden = !signedIn;
+    resultForm.hidden = true;
+    panel.hidden = true;
+    if (!signedIn || !APP) {
+      $("apply-button-label").textContent = t.applyButton;
+      return;
+    }
+
+    const s = APP.status;
+    const next = t.statusNext[s];
+    const nextText = typeof next === "function"
+      ? next(leftRevisions(s === "result_revise" ? APP.result_revisions : APP.revisions))
+      : next;
+    const reviews = (APP.reviews || []).slice().reverse();
+    const gateName = (id) => {
+      const g = PROGRAM && PROGRAM.review_gates.find((x) => x.id === id);
+      return g ? g[LANG] : id;
+    };
+    const reviewHtml = reviews.map((r) => `
+      <div class="review-block">
+        <div class="review-head">
+          <span>${escapeHtml(t.reviewOf(r.stage))}</span>
+          <span class="verdict ${escapeHtml(r.verdict)}">${escapeHtml(t.verdictLabels[r.verdict] || r.verdict)}</span>
+        </div>
+        ${r.summary ? `<p class="review-summary">${escapeHtml(r.summary)}</p>` : ""}
+        <table class="gate-table">
+          <tbody>
+            ${(r.gates || []).map((g) => `
+              <tr class="${g.status === "pass" ? "ok" : "bad"}">
+                <td class="g-name">${escapeHtml(gateName(g.id))}</td>
+                <td class="g-status">${g.status === "pass" ? t.gatePass : t.gateFail}</td>
+                <td class="g-text">${escapeHtml(g.evidence)}${g.status !== "pass" && g.fix ? `<div class="g-fix">→ ${escapeHtml(g.fix)}</div>` : ""}</td>
+              </tr>`).join("")}
+          </tbody>
+        </table>
+      </div>`).join("");
+
+    panel.hidden = false;
+    panel.innerHTML = `
+      <div class="status-head">
+        <span class="status-title">${escapeHtml(t.statusTitle)} · 0x${escapeHtml(APP.id)}</span>
+        <span class="status-badge ${escapeHtml(s)}">${escapeHtml(t.statusLabels[s] || s)}</span>
+      </div>
+      <p class="status-next">${escapeHtml(nextText || "")}</p>
+      ${reviewHtml}`;
+
+    const canRevise = s === "revise" && leftRevisions(APP.revisions) > 0;
+    const canNew = ["reject", "result_reject", "full"].includes(s);
+    applyForm.hidden = !(canRevise || canNew);
+    $("apply-button-label").textContent = canRevise ? t.reviseButton : t.applyButton;
+    if (canRevise) fillProposal(APP.proposal);
+
+    const canResult = s === "pass" || (s === "result_revise" && leftRevisions(APP.result_revisions) > 0);
+    resultForm.hidden = !canResult;
+    if (canResult && APP.result) fillResult(APP.result);
+  }
+
+  function fillProposal(p) {
+    if (!p || $("f-question").dataset.filled === APP.id) return;
+    $("f-direction").value = p.direction;
+    $("f-question").value = p.question;
+    $("f-baseline").value = p.baseline;
+    $("f-evaluation").value = p.evaluation;
+    $("f-plan").value = p.plan;
+    $("f-gpu-trial").value = p.gpu_trial;
+    $("f-gpu-full").value = p.gpu_full;
+    $("f-portfolio").value = p.portfolio;
+    $("f-contact").value = p.contact;
+    $("f-question").dataset.filled = APP.id;
+  }
+
+  function fillResult(r) {
+    if ($("r-repo").dataset.filled === APP.id) return;
+    $("r-repo").value = r.repo;
+    $("r-log").value = r.log;
+    $("r-numbers").value = r.numbers;
+    $("r-note").value = r.note || "";
+    $("r-repo").dataset.filled = APP.id;
+  }
+
+  /* --------------------------------------------------------------
+     data
+     -------------------------------------------------------------- */
+
+  async function loadProgram() {
+    try {
+      const resp = await fetch("/config/program.json", { cache: "no-store" });
+      PROGRAM = await resp.json();
+    } catch (err) {
+      console.error("[program]", err);
+    }
+  }
+
+  async function loadAuth() {
+    try {
+      const resp = await fetch("/api/auth/me", { cache: "no-store" });
+      const data = await resp.json();
+      AUTH = { loaded: true, configured: Boolean(data.configured), user: data.user || null };
+    } catch {
+      AUTH = { loaded: true, configured: false, user: null };
+    }
+  }
+
+  async function loadMine() {
+    APP = null;
+    if (!AUTH.user) return;
+    try {
+      const resp = await fetch("/api/my", { cache: "no-store" });
+      const data = await resp.json();
+      APP = data.application || null;
+    } catch (err) {
+      console.error("[my]", err);
+    }
+  }
+
+  /* --------------------------------------------------------------
+     forms
+     -------------------------------------------------------------- */
+
+  const FIELD_IDS = {
+    direction: "f-direction", question: "f-question", baseline: "f-baseline", evaluation: "f-evaluation",
+    plan: "f-plan", gpu_trial: "f-gpu-trial", gpu_full: "f-gpu-full", portfolio: "f-portfolio", contact: "f-contact",
+    repo: "r-repo", log: "r-log", numbers: "r-numbers", note: "r-note",
+  };
+
+  function clearFieldErrors(form) {
+    form.querySelectorAll(".field-error").forEach((el) => el.remove());
+    form.querySelectorAll(".invalid").forEach((el) => el.classList.remove("invalid"));
+  }
+
+  function showFieldErrors(details) {
+    const t = I18N[LANG];
+    (details || []).forEach((k) => {
+      const el = $(FIELD_IDS[k]);
+      if (!el) return;
+      el.classList.add("invalid");
+      const msg = document.createElement("div");
+      msg.className = "field-error";
+      msg.textContent = t.fieldErrors[k] || k;
+      el.insertAdjacentElement("afterend", msg);
+    });
+  }
+
+  async function post(form, feedbackId, payload) {
+    const t = I18N[LANG];
+    const fb = $(feedbackId);
+    const btn = form.querySelector("button[type=submit]");
+    clearFieldErrors(form);
+    fb.className = "submit-feedback visible";
+    fb.textContent = t.sending;
+    btn.disabled = true;
+    try {
+      const resp = await fetch("/api/apply", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok || !data.ok) {
+        fb.className = "submit-feedback visible error";
+        fb.textContent = t.errors[data.error] || `[${resp.status}] ${data.error || "error"}`;
+        showFieldErrors(data.details);
+        return;
+      }
+      fb.textContent = t.okSent;
+      await loadMine();
+      renderStatus();
+      $("status-panel").scrollIntoView({ behavior: "smooth", block: "start" });
+    } catch (err) {
+      fb.className = "submit-feedback visible error";
+      fb.textContent = "[network] " + (err && err.message ? err.message : "unreachable");
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  function wireForms() {
+    const val = (id) => $(id).value.trim();
+    $("apply-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      post($("apply-form"), "apply-feedback", {
+        kind: "proposal",
+        direction: val("f-direction"),
+        question: val("f-question"),
+        baseline: val("f-baseline"),
+        evaluation: val("f-evaluation"),
+        plan: val("f-plan"),
+        gpu_trial: Number(val("f-gpu-trial")),
+        gpu_full: Number(val("f-gpu-full")),
+        portfolio: val("f-portfolio"),
+        contact: val("f-contact"),
+      });
+    });
+    $("result-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      post($("result-form"), "result-feedback", {
+        kind: "result",
+        repo: val("r-repo"),
+        log: val("r-log"),
+        numbers: val("r-numbers"),
+        note: val("r-note"),
+      });
+    });
+    $("github-logout").addEventListener("click", async () => {
+      await fetch("/api/auth/logout", { method: "POST" }).catch(() => {});
+      AUTH.user = null;
+      APP = null;
+      render();
+    });
+    $("helper-copy").addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText($("helper-prompt").textContent);
+        $("helper-copy").textContent = I18N[LANG].helperCopied;
+        setTimeout(() => ($("helper-copy").textContent = I18N[LANG].helperCopy), 1500);
+      } catch (_) {}
+    });
+    document.querySelectorAll(".lang-btn").forEach((b) => {
+      b.addEventListener("click", () => {
+        LANG = b.getAttribute("data-lang");
+        try { localStorage.setItem("ti.lang", LANG); } catch (_) {}
+        render();
+      });
+    });
+  }
+
+  /* --------------------------------------------------------------
+     visuals
+     -------------------------------------------------------------- */
 
   /* --------------------------------------------------------------
      ascii hero art — procedural noise field
@@ -477,8 +734,10 @@
 
     function resize() {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
-      w = canvas.clientWidth = window.innerWidth;
-      h = canvas.clientHeight = window.innerHeight;
+      w = window.innerWidth;
+      h = window.innerHeight;
+      canvas.style.width = w + "px";
+      canvas.style.height = h + "px";
       canvas.width = w * dpr;
       canvas.height = h * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -543,330 +802,19 @@
   }
 
   /* --------------------------------------------------------------
-     mock ledger (local, for visual only until backend is wired)
-     -------------------------------------------------------------- */
-
-  function renderLedger() {
-    // The live ledger panel is owned by ledger.js (pulls from the public
-    // ledger repo). If that script has taken over (data-live=1) we do
-    // nothing. Otherwise we render a neutral placeholder — never the old
-    // localStorage mock, which would mislead real users.
-    const el = document.getElementById("ledger-table");
-    if (!el) return;
-    if (el.dataset.live === "1") return;
-    el.innerHTML =
-      '<div class="ledger-row">' +
-      '<div class="hash">—</div>' +
-      '<div class="time">ledger loading</div>' +
-      '<div class="status">—</div></div>';
-  }
-
-  /* --------------------------------------------------------------
-     submit form
-     -------------------------------------------------------------- */
-
-  async function loadAuthStatus() {
-    try {
-      const resp = await fetch("/api/auth/me", { cache: "no-store" });
-      const data = await resp.json().catch(() => ({}));
-      AUTH_STATE = {
-        loaded: true,
-        guardEnabled: Boolean(data.guard_enabled),
-        configured: Boolean(data.configured),
-        user: data.user || null,
-      };
-    } catch {
-      AUTH_STATE = {
-        loaded: true,
-        guardEnabled: false,
-        configured: false,
-        user: null,
-      };
-    }
-    renderAuthGate();
-  }
-
-  function renderAuthGate() {
-    const gate = document.getElementById("auth-gate");
-    const copy = document.getElementById("auth-gate-copy");
-    const login = document.getElementById("github-login");
-    const logout = document.getElementById("github-logout");
-    if (!gate || !copy || !login || !logout) return;
-    const t = I18N[LANG];
-
-    gate.hidden = false;
-    login.hidden = true;
-    logout.hidden = true;
-
-    if (!AUTH_STATE.loaded) {
-      gate.dataset.state = "loading";
-      copy.textContent = "...";
-      return;
-    }
-
-    if (!AUTH_STATE.guardEnabled && !AUTH_STATE.configured && !AUTH_STATE.user) {
-      gate.hidden = true;
-      return;
-    }
-
-    if (AUTH_STATE.guardEnabled && !AUTH_STATE.configured) {
-      gate.dataset.state = "required";
-      copy.textContent = t.authConfiguredMissing;
-      return;
-    }
-
-    if (AUTH_STATE.user) {
-      gate.dataset.state = "signed-in";
-      copy.textContent = t.authSignedIn(AUTH_STATE.user.login);
-      logout.hidden = false;
-      return;
-    }
-
-    gate.dataset.state = AUTH_STATE.guardEnabled ? "required" : "optional";
-    copy.textContent = AUTH_STATE.guardEnabled ? t.authRequired : t.authOptional;
-    login.hidden = false;
-  }
-
-  function wireAuth() {
-    const logout = document.getElementById("github-logout");
-    if (logout) {
-      logout.addEventListener("click", async () => {
-        await fetch("/api/auth/logout", { method: "POST" }).catch(() => {});
-        AUTH_STATE.user = null;
-        renderAuthGate();
-      });
-    }
-    loadAuthStatus();
-  }
-
-  function hashString(s) {
-    // quick, non-crypto hash just for a local visual receipt
-    let h = 2166136261 >>> 0;
-    for (let i = 0; i < s.length; i++) {
-      h ^= s.charCodeAt(i);
-      h = Math.imul(h, 16777619);
-    }
-    return "0x" + (h >>> 0).toString(16).padStart(8, "0").slice(0, 4) + "…" +
-      (h >>> 0).toString(16).padStart(8, "0").slice(4, 8);
-  }
-
-  function wireForm() {
-    const form = document.getElementById("submit-form");
-    if (!form) return;
-    const submitButton = document.getElementById("submit-button");
-    const fb = document.getElementById("submit-feedback");
-    const topStatus = document.getElementById("submit-status-top");
-    let submitting = false;
-
-    function setSubmitStatus(kind, message, ledgerUrl) {
-      const className = "submit-feedback visible" + (kind === "error" ? " error" : "");
-      const gate = document.getElementById("auth-gate");
-      const gateCopy = document.getElementById("auth-gate-copy");
-      const gateActions = gate ? gate.querySelector(".auth-gate-actions") : null;
-      if (fb) {
-        fb.className = className;
-        fb.textContent = message;
-      }
-      if (gate && gateCopy) {
-        gate.hidden = false;
-        gate.dataset.state = kind === "success" ? "success" : kind === "error" ? "error" : "loading";
-        gateCopy.textContent = message;
-        const existing = document.getElementById("submit-ledger-link");
-        if (existing) existing.remove();
-        if (ledgerUrl && gateActions) {
-          const link = document.createElement("a");
-          link.id = "submit-ledger-link";
-          link.className = "auth-btn";
-          link.href = ledgerUrl;
-          link.target = "_blank";
-          link.rel = "noopener noreferrer";
-          link.textContent = I18N[LANG].submitStateLedger;
-          gateActions.prepend(link);
-        }
-      }
-      if (topStatus) {
-        topStatus.hidden = false;
-        topStatus.className = "submit-status-top" + (kind === "error" ? " error" : kind === "success" ? " success" : "");
-        topStatus.textContent = message;
-        if (ledgerUrl) {
-          const link = document.createElement("a");
-          link.href = ledgerUrl;
-          link.target = "_blank";
-          link.rel = "noopener noreferrer";
-          link.textContent = I18N[LANG].submitStateLedger;
-          topStatus.appendChild(document.createTextNode("\n"));
-          topStatus.appendChild(link);
-        }
-      }
-      const scrollTarget = gate || topStatus;
-      if (scrollTarget) {
-        scrollTarget.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
-    }
-
-    function fieldValue(id) {
-      const el = document.getElementById(id);
-      return el && typeof el.value === "string" ? el.value.trim() : "";
-    }
-
-    async function handleSubmit() {
-      if (submitting) return;
-      submitting = true;
-      const t = I18N[LANG];
-      setSubmitStatus("info", t.submitStateSending);
-      const btn = submitButton || form.querySelector(".submit-btn");
-      if (btn) btn.setAttribute("disabled", "true");
-
-      try {
-        if (AUTH_STATE.guardEnabled && !AUTH_STATE.user) {
-          setSubmitStatus("error", t.feedback.authRequired);
-          renderAuthGate();
-          return;
-        }
-
-        const task = fieldValue("f-task");
-        const criterion = fieldValue("f-criterion");
-        const plan = fieldValue("f-plan");
-        const endpoint = fieldValue("f-endpoint");
-        const repo = fieldValue("f-repo");
-        const baselineEndpoint = fieldValue("f-baseline");
-        const baselineRepo = fieldValue("f-baseline-repo");
-        const contact = fieldValue("f-contact");
-        const consent = Boolean(document.getElementById("f-consent")?.checked);
-        const axes = Array.from(form.querySelectorAll('input[name="axis"]:checked')).map((el) => el.value);
-
-        if (!task || !criterion || !plan || !endpoint || !repo || !baselineEndpoint || !baselineRepo || !contact || !consent) {
-          setSubmitStatus("error", t.feedback.missing);
-          return;
-        }
-        if (!axes.length) {
-          setSubmitStatus("error", t.feedback.noAxis);
-          return;
-        }
-
-        try {
-          const u = new URL(endpoint);
-          if (!/^https?:$/.test(u.protocol)) throw new Error("bad");
-        } catch {
-          setSubmitStatus("error", t.feedback.badUrl);
-          return;
-        }
-        try {
-          const u = new URL(baselineEndpoint);
-          if (!/^https?:$/.test(u.protocol)) throw new Error("bad");
-        } catch {
-          setSubmitStatus("error", t.feedback.badBaseline);
-          return;
-        }
-        if (!/^https:\/\/(www\.)?github\.com\//.test(repo)) {
-          setSubmitStatus("error", t.feedback.badRepo);
-          return;
-        }
-        if (!/^https:\/\/(www\.)?github\.com\//.test(baselineRepo)) {
-          setSubmitStatus("error", t.feedback.badBaselineRepo);
-          return;
-        }
-
-        const resp = await fetch("/api/submit", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ task, criterion, axes, plan, endpoint, repo, baselineEndpoint, baselineRepo, contact }),
-        });
-        const data = await resp.json().catch(() => ({}));
-
-        if (!resp.ok || !data.ok) {
-          const msg = resp.status === 429
-            ? "[reject] rate limit exceeded"
-            : "[reject] " + (data.error || `http ${resp.status}`);
-          setSubmitStatus("error", t.submitStateError(msg));
-          return;
-        }
-
-        if (!data.submission_id || !data.ledger_url) {
-          setSubmitStatus("error", t.submitStateError("[reject] submit response missing ledger confirmation"));
-          return;
-        }
-
-        const shortHash =
-          "0x" + String(data.submission_id || "").padEnd(12, "·").slice(0, 4) +
-          "…" + String(data.submission_id || "").slice(-4);
-
-        setSubmitStatus("success", `${t.submitStateSuccess(data.submission_id)}\n${t.feedback.ok(shortHash)}`, data.ledger_url);
-        form.reset();
-      } catch (err) {
-        setSubmitStatus("error", t.submitStateError("[network] " + (err && err.message ? err.message : "unreachable")));
-      } finally {
-        submitting = false;
-        if (btn) btn.removeAttribute("disabled");
-      }
-    }
-
-    if (submitButton) {
-      const clickSubmit = async (e) => {
-        e.preventDefault();
-        try {
-          await handleSubmit();
-        } catch (err) {
-          setSubmitStatus("error", I18N[LANG].submitStateError("[client] " + (err && err.message ? err.message : "submit button failed")));
-        }
-      };
-      submitButton.addEventListener("click", clickSubmit);
-      submitButton.onclick = clickSubmit;
-    }
-
-    document.addEventListener("click", async (e) => {
-      if (!e.target || !e.target.closest || !e.target.closest("#submit-button")) return;
-      e.preventDefault();
-      try {
-        await handleSubmit();
-      } catch (err) {
-        setSubmitStatus("error", I18N[LANG].submitStateError("[client] " + (err && err.message ? err.message : "submit delegated click failed")));
-      }
-    }, true);
-
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      try {
-        await handleSubmit();
-      } catch (err) {
-        setSubmitStatus("error", I18N[LANG].submitStateError("[client] " + (err && err.message ? err.message : "submit handler failed")));
-      }
-    });
-  }
-
-  /* --------------------------------------------------------------
-     lang toggle
-     -------------------------------------------------------------- */
-
-  function wireLang() {
-    document.querySelectorAll(".lang-btn").forEach((b) => {
-      b.addEventListener("click", () => {
-        LANG = b.getAttribute("data-lang");
-        try { localStorage.setItem("ti.lang", LANG); } catch (_) {}
-        applyI18n();
-      });
-    });
-  }
-
-  /* --------------------------------------------------------------
      boot
      -------------------------------------------------------------- */
 
-  document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("DOMContentLoaded", async () => {
     const boot = (name, fn) => {
-      try {
-        fn();
-      } catch (err) {
-        console.error(`[boot:${name}]`, err);
-      }
+      try { fn(); } catch (err) { console.error(`[boot:${name}]`, err); }
     };
-
-    boot("i18n", applyI18n);
-    boot("lang", wireLang);
-    boot("auth", wireAuth);
-    boot("form", wireForm);
     boot("ascii", renderAsciiArt);
     boot("topology", startTopology);
-    boot("ledger", renderLedger);
+    boot("forms", wireForms);
+    boot("render", render);
+    await Promise.all([loadProgram(), loadAuth()]);
+    await loadMine();
+    boot("render", render);
   });
 })();
