@@ -1,6 +1,7 @@
 /// <reference path="../../global.d.ts" />
 
 import type { SessionUser } from "./auth";
+import { storeEnv } from "./store";
 
 export type RateLimitResult =
   | { ok: true }
@@ -24,12 +25,12 @@ type LimitSpec = {
 };
 
 function redisConfigured(): boolean {
-  return Boolean(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN);
+  const { base, token } = storeEnv();
+  return Boolean(base && token);
 }
 
 async function redisPipeline(commands: Array<Array<string | number>>): Promise<Array<{ result?: unknown; error?: string }>> {
-  const base = process.env.UPSTASH_REDIS_REST_URL?.replace(/\/+$/, "");
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  const { base, token } = storeEnv();
   if (!base || !token) throw new Error("not_configured");
   const resp = await fetch(`${base}/pipeline`, {
     method: "POST",

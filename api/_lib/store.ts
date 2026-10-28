@@ -76,9 +76,17 @@ export function isProduction(): boolean {
   return process.env.VERCEL_ENV === "production";
 }
 
+// The Vercel Upstash integration injects KV_REST_API_*; the older
+// UPSTASH_REDIS_REST_* pair pointed at a store that no longer exists.
+export function storeEnv(): { base: string; token: string } {
+  return {
+    base: (process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || "").replace(/\/+$/, ""),
+    token: process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || "",
+  };
+}
+
 export async function redis(commands: Array<Array<string | number>>): Promise<Array<{ result?: unknown; error?: string }>> {
-  const base = process.env.UPSTASH_REDIS_REST_URL?.replace(/\/+$/, "");
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  const { base, token } = storeEnv();
   if (!base || !token) throw new Error("store not configured");
   const resp = await fetch(`${base}/pipeline`, {
     method: "POST",

@@ -1,14 +1,14 @@
 /// <reference path="../global.d.ts" />
 
 import { json } from "./_lib/http";
-import { redis } from "./_lib/store";
+import { redis, storeEnv } from "./_lib/store";
 
 // GET /api/health · is the application store reachable (no secrets returned).
 
 export const config = { runtime: "edge" };
 
 export default async function handler(): Promise<Response> {
-  const base = process.env.UPSTASH_REDIS_REST_URL || "";
+  const { base } = storeEnv();
   let host = "";
   try { host = new URL(base).hostname.replace(/^[^.]+/, "*"); } catch { /* unset or invalid */ }
   try {
