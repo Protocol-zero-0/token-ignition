@@ -80,7 +80,7 @@
     const rows = all.filter((r) => r.kind === "gpu-proposal");
     if (!rows.length) {
       const zh = document.documentElement.lang !== "en";
-      host.innerHTML = `<p class="ledger-empty">${zh ? "首批申请评审中，记录会出现在这里。" : "The first applications are in review. Records will appear here."}</p>`;
+      host.innerHTML = `<p class="ledger-empty">${zh ? "首批课题评审中，记录会出现在这里。" : "The first proposals are in review. Records will appear here."}</p>`;
       return;
     }
     host.innerHTML = rows

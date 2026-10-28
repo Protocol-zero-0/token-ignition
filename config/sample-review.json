@@ -5,25 +5,81 @@
   "value": "high",
   "summary": "冻结 Qwen2.5-Coder-7B 权重，用失败轨迹驱动 harness 搜索，只改工具调用与上下文保留策略，检验能否在 SWE-bench Lite 的 100 题留出集上把 pass@1 从基线 harness 的 18.0% 提高 5 个点以上。对照为同一模型下未修改的原始 harness。",
   "evidence": [
-   {"id": "applicant", "finding": "申请人 GitHub 有两个 agent 评测相关仓库，其中一个为 SWE 类任务的复现脚本，提交记录持续 8 个月；代表作链接为一篇 workshop 论文，作者署名与 GitHub 账号一致。"},
-   {"id": "baseline", "finding": "基线给出公开仓库与固定 commit，并引用原仓库 README 中报告的 18.0%。commit 存在，评测脚本位于 eval/ 目录。"},
-   {"id": "related", "finding": "失败轨迹驱动的 harness 进化已有多组近期工作；本提案的价值在于小模型、单卡条件下的受控对照，而非方法首创。"}
+   {
+    "id": "applicant",
+    "finding": "贡献者 GitHub 有两个 agent 评测相关仓库，其中一个为 SWE 类任务的复现脚本，提交记录持续 8 个月；代表作链接为一篇 workshop 论文，作者署名与 GitHub 账号一致。"
+   },
+   {
+    "id": "baseline",
+    "finding": "基线给出公开仓库与固定 commit，并引用原仓库 README 中报告的 18.0%。commit 存在，评测脚本位于 eval/ 目录。"
+   },
+   {
+    "id": "related",
+    "finding": "失败轨迹驱动的 harness 进化已有多组近期工作；本提案的价值在于小模型、单卡条件下的受控对照，而非方法首创。"
+   }
   ],
   "gates": [
-   {"id": "scope", "status": "pass", "evidence": "研究对象是 agent 的 harness，属于 Harness 优化方向。", "fix": ""},
-   {"id": "applicant", "status": "pass", "evidence": "公开仓库与论文能说明申请人熟悉 SWE 类评测与复现。", "fix": ""},
-   {"id": "baseline", "status": "pass", "evidence": "仓库、commit 与报告数字三者齐全，可追溯。", "fix": ""},
-   {"id": "metric", "status": "fail", "evidence": "100 题留出集上 pass@1 的抽样波动约 ±4 个点，单次运行的 +5 无法区分真实提升与噪声。", "fix": "最终评测改为 3 个种子，按题目做配对检验，并预先写明判定成功的阈值。"},
-   {"id": "action_space", "status": "pass", "evidence": "写明只改工具调用与上下文保留，模型权重与评测脚本冻结，对照组为原始 harness。", "fix": ""},
-   {"id": "integrity", "status": "pass", "evidence": "评分进程与候选代码分离运行，留出集在搜索阶段不可见。", "fix": ""},
-   {"id": "compute", "status": "pass", "evidence": "试跑为 20 题小集上的 3 轮搜索，估算 16 卡时，放得进 24 卡时与 3 天。", "fix": ""}
+   {
+    "id": "scope",
+    "status": "pass",
+    "evidence": "研究对象是 agent 的 harness，属于 Harness 优化方向。",
+    "fix": ""
+   },
+   {
+    "id": "applicant",
+    "status": "pass",
+    "evidence": "公开仓库与论文能说明贡献者熟悉 SWE 类评测与复现。",
+    "fix": ""
+   },
+   {
+    "id": "baseline",
+    "status": "pass",
+    "evidence": "仓库、commit 与报告数字三者齐全，可追溯。",
+    "fix": ""
+   },
+   {
+    "id": "metric",
+    "status": "fail",
+    "evidence": "100 题留出集上 pass@1 的抽样波动约 ±4 个点，单次运行的 +5 无法区分真实提升与噪声。",
+    "fix": "最终评测改为 3 个种子，按题目做配对检验，并预先写明判定成功的阈值。"
+   },
+   {
+    "id": "action_space",
+    "status": "pass",
+    "evidence": "写明只改工具调用与上下文保留，模型权重与评测脚本冻结，对照组为原始 harness。",
+    "fix": ""
+   },
+   {
+    "id": "integrity",
+    "status": "pass",
+    "evidence": "评分进程与候选代码分离运行，留出集在搜索阶段不可见。",
+    "fix": ""
+   },
+   {
+    "id": "compute",
+    "status": "pass",
+    "evidence": "试跑为 20 题小集上的 3 轮搜索，约 16 卡时、几天内可完成，成败都能观察到。",
+    "fix": ""
+   }
   ],
-  "compute_note": "单卡推理约 6 分钟/题。试跑 20 题 × 3 轮 × 2 组 ≈ 12 卡时，留 4 卡时余量。完整运行 100 题 × 3 种子 × 2 组再加 10 轮搜索，估算约 150 卡时，在 200 卡时上限内。",
+  "compute_note": "单卡推理约 6 分钟/题。试跑：20 题 × 3 轮 × 2 组，约 12 卡时，建议按 16 卡时（单卡 A100 或 RTX 5090 均可）发放。完整：100 题 × 3 种子 × 2 组再加 10 轮搜索，约 150 卡时。",
   "quality": [
-   {"id": "frontier", "note": "方向活跃，近半年有多篇相关工作。贡献定位应是受控对照与迁移分析。"},
-   {"id": "value", "note": "若提升在配对检验下成立，可作为小模型 harness 进化的可复现基准点。"},
-   {"id": "iteration", "note": "每轮搜索约 2 小时，3 天内可完成试跑并据结果调整搜索空间。"},
-   {"id": "statistics", "note": "当前设计统计功效不足，是本次需修改的主要原因。"}
+   {
+    "id": "frontier",
+    "note": "方向活跃，近半年有多篇相关工作。贡献定位应是受控对照与迁移分析。"
+   },
+   {
+    "id": "value",
+    "note": "若提升在配对检验下成立，可作为小模型 harness 进化的可复现基准点。"
+   },
+   {
+    "id": "iteration",
+    "note": "每轮搜索约 2 小时，3 天内可完成试跑并据结果调整搜索空间。"
+   },
+   {
+    "id": "statistics",
+    "note": "当前设计统计功效不足，是本次需修改的主要原因。"
+   }
   ]
  },
  "en": {
@@ -32,25 +88,81 @@
   "value": "high",
   "summary": "With Qwen2.5-Coder-7B weights frozen, run a harness search driven by failure traces that changes only tool calling and context retention, and test whether pass@1 on a 100-task held-out split of SWE-bench Lite rises by 5+ points over the baseline harness's 18.0%. The control is the unmodified original harness on the same model.",
   "evidence": [
-   {"id": "applicant", "finding": "The applicant's GitHub has two agent-evaluation repositories, one with reproduction scripts for SWE-style tasks, with commits over 8 months. The portfolio link is a workshop paper whose author matches the GitHub account."},
-   {"id": "baseline", "finding": "The baseline gives a public repository at a pinned commit and cites the 18.0% reported in its README. The commit exists and the evaluation script is under eval/."},
-   {"id": "related", "finding": "Several recent works study failure-driven harness evolution. The value here is a controlled small-model, single-GPU comparison rather than methodological novelty."}
+   {
+    "id": "applicant",
+    "finding": "The applicant's GitHub has two agent-evaluation repositories, one with reproduction scripts for SWE-style tasks, with commits over 8 months. The portfolio link is a workshop paper whose author matches the GitHub account."
+   },
+   {
+    "id": "baseline",
+    "finding": "The baseline gives a public repository at a pinned commit and cites the 18.0% reported in its README. The commit exists and the evaluation script is under eval/."
+   },
+   {
+    "id": "related",
+    "finding": "Several recent works study failure-driven harness evolution. The value here is a controlled small-model, single-GPU comparison rather than methodological novelty."
+   }
   ],
   "gates": [
-   {"id": "scope", "status": "pass", "evidence": "The object of study is the agent harness, within Harness optimization.", "fix": ""},
-   {"id": "applicant", "status": "pass", "evidence": "Public repositories and the paper show familiarity with SWE-style evaluation and reproduction.", "fix": ""},
-   {"id": "baseline", "status": "pass", "evidence": "Repository, commit and reported number are all given and traceable.", "fix": ""},
-   {"id": "metric", "status": "fail", "evidence": "Sampling noise of pass@1 on 100 tasks is about ±4 points, so a single-run +5 cannot separate a real gain from noise.", "fix": "Use 3 seeds for the final evaluation, run a per-task paired test, and state the success threshold in advance."},
-   {"id": "action_space", "status": "pass", "evidence": "Only tool calling and context retention change; weights and the scorer are frozen; the control is the original harness.", "fix": ""},
-   {"id": "integrity", "status": "pass", "evidence": "The scorer runs separately from candidate code and the held-out split is hidden during search.", "fix": ""},
-   {"id": "compute", "status": "pass", "evidence": "The trial is 3 search rounds on a 20-task subset, about 16 GPU-hours, within 24 GPU-hours and 3 days.", "fix": ""}
+   {
+    "id": "scope",
+    "status": "pass",
+    "evidence": "The object of study is the agent harness, within Harness optimization.",
+    "fix": ""
+   },
+   {
+    "id": "applicant",
+    "status": "pass",
+    "evidence": "Public repositories and the paper show familiarity with SWE-style evaluation and reproduction.",
+    "fix": ""
+   },
+   {
+    "id": "baseline",
+    "status": "pass",
+    "evidence": "Repository, commit and reported number are all given and traceable.",
+    "fix": ""
+   },
+   {
+    "id": "metric",
+    "status": "fail",
+    "evidence": "Sampling noise of pass@1 on 100 tasks is about ±4 points, so a single-run +5 cannot separate a real gain from noise.",
+    "fix": "Use 3 seeds for the final evaluation, run a per-task paired test, and state the success threshold in advance."
+   },
+   {
+    "id": "action_space",
+    "status": "pass",
+    "evidence": "Only tool calling and context retention change; weights and the scorer are frozen; the control is the original harness.",
+    "fix": ""
+   },
+   {
+    "id": "integrity",
+    "status": "pass",
+    "evidence": "The scorer runs separately from candidate code and the held-out split is hidden during search.",
+    "fix": ""
+   },
+   {
+    "id": "compute",
+    "status": "pass",
+    "evidence": "The trial is 3 search rounds on a 20-task subset, about 16 GPU-hours over a few days, with success and failure both observable.",
+    "fix": ""
+   }
   ],
-  "compute_note": "Single-GPU inference takes about 6 minutes per task. Trial: 20 tasks × 3 rounds × 2 arms ≈ 12 GPU-hours plus 4 in reserve. Full: 100 tasks × 3 seeds × 2 arms plus 10 search rounds ≈ 150 GPU-hours, within the 200 cap.",
+  "compute_note": "Single-GPU inference takes about 6 minutes per task. Trial: 20 tasks × 3 rounds × 2 arms ≈ 12 GPU-hours; suggest granting 16 GPU-hours (one A100 or RTX 5090 is enough). Full: 100 tasks × 3 seeds × 2 arms plus 10 search rounds ≈ 150 GPU-hours.",
   "quality": [
-   {"id": "frontier", "note": "An active direction with several recent works; the contribution should be framed as a controlled comparison and transfer analysis."},
-   {"id": "value", "note": "If the gain holds under a paired test, it is a reproducible reference point for small-model harness evolution."},
-   {"id": "iteration", "note": "About 2 hours per search round; the trial fits in 3 days with room to adjust the search space."},
-   {"id": "statistics", "note": "Statistical power is insufficient as designed, which is the main reason for Revise."}
+   {
+    "id": "frontier",
+    "note": "An active direction with several recent works; the contribution should be framed as a controlled comparison and transfer analysis."
+   },
+   {
+    "id": "value",
+    "note": "If the gain holds under a paired test, it is a reproducible reference point for small-model harness evolution."
+   },
+   {
+    "id": "iteration",
+    "note": "About 2 hours per search round; the trial fits in 3 days with room to adjust the search space."
+   },
+   {
+    "id": "statistics",
+    "note": "Statistical power is insufficient as designed, which is the main reason for Revise."
+   }
   ]
  }
 }

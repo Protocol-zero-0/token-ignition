@@ -6,24 +6,23 @@
   "new_application_every_days": 7,
   "max_revisions": 3,
   "min_github_account_age_days": 30,
-  "trial_gpu_hours_max": 24,
-  "full_gpu_hours_max": 200,
-  "max_gpus_per_job": 8,
-  "trial_days": 3,
-  "full_days": 14
+  "trial_gpu_hours_max": 2000,
+  "full_gpu_hours_max": 50000,
+  "trial_days": 7,
+  "full_days": 28
  },
  "quota": {
   "trial": {
-   "zh": "≤ 24 卡时 · 3 天内跑通最小实验",
-   "en": "≤ 24 GPU-hours · smallest experiment within 3 days"
+   "zh": "跑通最小实验所需的算力，周期短",
+   "en": "Enough compute for the smallest experiment, on a short cycle"
   },
   "full": {
-   "zh": "≤ 200 卡时 · 2 周内交付完整结果",
-   "en": "≤ 200 GPU-hours · full result within 2 weeks"
+   "zh": "按评审核定的计划资助，成果公开",
+   "en": "Funded for the plan agreed in review; results are public"
   },
   "research": {
-   "zh": "成果突出者长期给卡，邀请加入研究组",
-   "en": "Standout work: long-term compute and a research-group invitation"
+   "zh": "长期算力与合作，邀请加入研究组",
+   "en": "Long-term compute and collaboration in the research group"
   }
  },
  "directions": [
@@ -140,8 +139,8 @@
   },
   {
    "id": "applicant",
-   "zh": "申请人能力匹配",
-   "en": "Applicant fit",
+   "zh": "贡献者能力匹配",
+   "en": "Contributor fit",
    "desc_zh": "公开作品能说明你做得了这件事。",
    "desc_en": "Public work shows you can do this."
   },
@@ -177,20 +176,16 @@
    "id": "compute",
    "zh": "算力与周期",
    "en": "Compute and timeline",
-   "desc_zh": "试跑放得进 24 卡时、3 天；成败都能观察到。",
-   "desc_en": "The trial fits 24 GPU-hours and 3 days; success and failure are both observable."
+   "desc_zh": "试跑小而快，成败都能观察到；算力需求和计划相称。",
+   "desc_en": "A small, fast trial where success and failure are both observable; compute matches the plan."
   }
  ],
- "gpu": {
-  "zh": "RTX 5090 32GB · 单机 8 卡",
-  "en": "RTX 5090 32GB · 8 GPUs per node"
- },
  "review": {
   "evidence": [
    {
     "id": "applicant",
-    "zh": "申请人公开作品",
-    "en": "Applicant's public work"
+    "zh": "贡献者公开作品",
+    "en": "Contributor's public work"
    },
    {
     "id": "baseline",

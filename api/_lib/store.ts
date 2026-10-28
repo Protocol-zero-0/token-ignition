@@ -29,6 +29,7 @@ export type Proposal = {
   baseline: string;
   evaluation: string;
   plan: string;
+  gpu_type?: string;
   gpu_trial: number;
   gpu_full: number;
   portfolio: string;

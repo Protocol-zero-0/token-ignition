@@ -10,57 +10,66 @@
 
   const I18N = {
     zh: {
-      brand: "TOKEN-IGNITION // RSI 算力资助",
-      heroLead: "RSI 研究的算力资助。你出想法和基线，我们出 GPU。",
-      heroDef: "RSI（recursive self-improvement，递归自我改进）：让 AI 研究 agent 去改进 AI 系统本身，包括评测、harness、训练和科研流程。",
-      heroStats: (L, gpu) => [
-        ["RTX 5090", gpu.zh.replace(/^RTX 5090 /, "")],
-        [`${L.trial_gpu_hours_max} 卡时`, `试跑 · ${L.trial_days} 天出结果`],
-        [`${L.full_gpu_hours_max} 卡时`, `完整 · ${L.full_days / 7} 周交付`],
-        ["~15 分钟", "申请 · AI 结构化评审"],
+      brand: "TOKEN-IGNITION // 开源 RSI 共同研究",
+      heroLead: "一个开源的 RSI 共同研究计划。",
+      heroDef: "RSI（recursive self-improvement，递归自我改进）：让 AI 研究 agent 去改进 AI 系统本身，包括评测、harness、训练和科研流程。我们和社区一起提出课题、做实验、公开结果；好的课题，我们提供 GPU 资助。",
+      heroPillars: [
+        ["开源", "任务、基线、代码和结果全部公开"],
+        ["共研", "课题由贡献者提出，成果署名归贡献者"],
+        ["GPU 资助", "A100、H100、RTX 5090 等，按课题需要配给"],
+        ["结构化评审", "AI 逐项评审，研究组复核"],
       ],
-      heroCTA: "↓ 申请算力",
+      heroCTA: "↓ 提交课题",
       heroCTA2: "看方向",
 
+      aboutLabel: "计划",
+      aboutTitle: "我们一起做什么",
+      aboutIntro: "AI 能不能改进 AI 自己，需要大量可复现的实验来回答。单个实验室做不完，这件事适合开源来做。",
+      aboutItems: [
+        ["一套公开的 RSI 任务", "每个课题沉淀成一个可复现的任务：固定的基线、程序化的评测、清楚的数据边界。任何人都能在上面复现、比较、继续改进。"],
+        ["一个研究者网络", "提出课题、做出结果的人，会被社区看见。表现突出的贡献者，邀请加入研究组长期合作。"],
+        ["公开的研究结果", "正面结果和负面结果都公开。一个被证伪的假设，和一个被证实的假设同样有价值。"],
+      ],
+
       dirLabel: "方向",
-      dirTitle: "资助五类 RSI 研究",
-      dirIntro: "你的基线就是考卷：从一个公开、可复现的结果出发，用程序算出的指标证明你超过了它。不需要自带 GPU。",
+      dirTitle: "五类 RSI 课题",
+      dirIntro: "你的基线就是考卷：从一个公开、可复现的结果出发，用程序算出的指标证明你超过了它。",
       pathsTitle: "两种入口",
       paths: [
         ["A · 带来你参与过的项目", "一个你参与构建、完全开源的项目。它的开放问题和刷分漏洞，你比任何人都清楚。"],
         ["B · 从领域知名项目出发", "选一个和你专长相关的知名开源项目，围绕它的一个实验设计 RSI 任务。"],
       ],
 
-      flowLabel: "流程",
-      flowTitle: "五步，短周期",
+      flowLabel: "参与",
+      flowTitle: "从课题到公开成果",
       flowItems: [
-        ["申请", "GitHub 登录，填 7 项，约 15 分钟。"],
-        ["AI 评审", "证据核查、7 道硬门槛、质量评审，通常 24 小时内出报告。可在原申请上修改，最多 3 次。"],
-        ["试跑", "通过即发 RTX 5090 容器账号，3 天内跑通最小实验。"],
-        ["交成果", "公开仓库、一次完整运行的记录、与基线对比的数字。"],
-        ["完整额度", "成果复审通过，按计划给卡，2 周内交付。"],
+        ["提交课题", "GitHub 登录，填 7 项，约 15 分钟。"],
+        ["AI 评审", "证据核查、7 道硬门槛、质量评审，通常 24 小时内出报告。可在原课题上修改，最多 3 次。"],
+        ["立项与试跑", "通过后课题公开立项。需要算力的，我们发放 GPU 容器账号，先跑通最小实验。"],
+        ["公开成果", "公开仓库、完整运行记录、与基线对比的数字。"],
+        ["完整资助", "成果复审通过，按评审核定的计划继续资助。"],
       ],
-      tierKeys: ["T1 · 试跑", "T2 · 完整", "T3 · 研究组"],
+      tierKeys: ["试跑", "完整", "研究组"],
 
       reviewLabel: "评审",
       reviewTitle: "结构化评审",
-      reviewIntro: "每份申请收到一份格式固定的评审报告，逐项写明证据和改法，显示在你的申请状态里。",
+      reviewIntro: "每个课题收到一份格式固定的评审报告，逐项写明证据和改法，显示在你的申请状态里。",
       reportOutline: [
         ["提案复述", "用一段话复述你要验证什么，确认理解一致。"],
-        ["证据核查", "申请人公开作品、基线仓库与版本、相关工作。"],
+        ["证据核查", "贡献者公开作品、基线仓库与版本、相关工作。"],
         ["硬门槛", "7 道，逐项 Pass / Fail，附证据和改法。任何一道 Fail 即需修改。"],
-        ["算力估算", "按你的计划估算卡时，判断试跑是否放得进额度。"],
+        ["算力估算", "按你的计划估算卡时，给出建议的试跑规模。"],
         ["质量评审", "前沿相关性、科学价值、迭代可行性、统计解释力。"],
         ["结论", "通过 / 需修改 / 不通过。"],
       ],
       gatesTitle: "7 道硬门槛",
       failTitle: "常见不通过原因",
       sampleTitle: "报告示例",
-      sampleIntro: "下面是一份示例申请收到的完整报告，申请内容为虚构。",
+      sampleIntro: "下面是一个示例课题收到的完整报告，课题内容为虚构。",
       sampleSummary: "展开示例报告",
 
-      applyLabel: "申请",
-      applyTitle: "申请算力",
+      applyLabel: "提交",
+      applyTitle: "提交课题",
       applyIntro: "先用 GitHub 登录。注册不满 30 天的账号暂不接收。",
       authLogin: "用 GitHub 登录",
       authLogout: "退出",
@@ -72,15 +81,15 @@
       helperIntro: "把下面这段复制到 ChatGPT、Claude 或任何你常用的 AI 里，回答它的追问，再把结果填进表单。",
       helperCopy: "复制提示词",
       helperCopied: "已复制",
-      helperPrompt: (dirs) => `你是我的 RSI 研究申请助手。我要申请 Token Ignition 的 GPU（RTX 5090），做 RSI（递归自我改进）方向的研究。
+      helperPrompt: (dirs) => `你是我的 RSI 研究申请助手。我要向 Token Ignition（开源 RSI 共同研究计划）提交课题，并申请 GPU 资助。
 可选方向：${dirs}。
 请一次问我一个问题，帮我把想法整理成下面 7 项，最后按顺序输出：
 1. 方向：从上面选一个
 2. 研究问题：一句话说清要验证什么
 3. 基线：公开仓库链接 + 固定 commit 或版本 + 已报告的数字
 4. 指标与防作弊：在什么数据上、用什么指标、由哪个程序算；测试集怎么隔离；agent 有没有办法伪造分数
-5. 实验设计：agent 能改什么、什么冻结、和谁对照；试跑 3 天内跑什么；成功和失败各会看到什么
-6. 算力：试跑多少卡时（上限 24），完整多少卡时（上限 200）
+5. 实验设计：agent 能改什么、什么冻结、和谁对照；试跑跑什么最小实验；成功和失败各会看到什么
+6. 算力：用什么卡（如 A100、H100、RTX 5090），试跑和完整各需多少卡时
 7. 代表作：一个论文、仓库或比赛的链接
 评审会逐项检查：RSI 范围、申请人能力、基线可追溯、问题与指标、动作空间、评测完整性、算力与周期。
 如果哪一项过不了，请直接指出并帮我改。`,
@@ -97,22 +106,24 @@
       f4Hint: "在什么数据上、用什么指标、由哪个程序算。测试集怎么隔离，agent 有没有办法伪造分数。",
       f4Ph: "例：在 100 题留出集上算 pass@1，评分进程独立于候选代码运行；测试集在评分前对 agent 不可见。",
       f5Label: "实验设计",
-      f5Hint: "agent 能改什么、什么冻结、和谁对照。试跑 3 天内跑什么；成功和失败各会看到什么。",
+      f5Hint: "agent 能改什么、什么冻结、和谁对照。试跑跑什么最小实验；成功和失败各会看到什么。",
       f5Ph: "冻结 Qwen2.5-7B 权重，只改工具调用流程；对照为原始 harness。试跑：……成功：……失败：……",
       f6Label: "算力",
-      f6Hint: "RTX 5090 卡时。试跑上限 24，完整上限 200。",
+      f6Hint: "按你的计划估算。实际发放的卡型和时长，按评审结论和当期算力确定。",
+      f6Type: "卡型",
+      f6TypePh: "如 A100 80GB / H100 / RTX 5090",
       f6Trial: "试跑（卡时）",
       f6Full: "完整（卡时）",
       f7Label: "你是谁",
       f7Hint: "GitHub 账号会自动带上。再给一个代表作，和一个我们能联系到你的方式。",
       f7Portfolio: "代表作链接（论文、仓库或比赛）",
       f7PortfolioPh: "https://...",
-      f7Contact: "联系方式（只用于发容器账号，不公开）",
+      f7Contact: "联系方式（只用于联系你和发放算力，不公开）",
       f7ContactPh: "邮箱 / 微信 / 小红书号",
       applyButton: "提交申请",
       reviseButton: "提交修改",
 
-      resultTitle: "交成果，申请完整额度",
+      resultTitle: "公开成果，申请完整资助",
       r1Label: "公开仓库",
       r2Label: "运行记录",
       r2Hint: "一份完整运行的日志或报告链接。",
@@ -125,21 +136,21 @@
       statusLabels: {
         pending: "评审中",
         revise: "需修改",
-        pass: "已通过 · 试跑",
+        pass: "已立项 · 试跑",
         reject: "未通过",
         result_pending: "成果评审中",
         result_revise: "成果需修改",
-        full: "已通过 · 完整额度",
+        full: "已通过 · 完整资助",
         result_reject: "成果未通过",
       },
       statusNext: {
         pending: "AI 评审通常在 24 小时内完成，结果会显示在这里。",
         revise: (left) => `按下面的意见修改后重新提交，还可以改 ${left} 次。`,
-        pass: "我们会按你留的联系方式发试跑用的容器账号。跑完后在下面交成果。",
+        pass: "课题已立项。需要算力的，我们会按你留的联系方式发放容器账号。跑完后在下面提交成果。",
         reject: "这次没有通过。7 天后可以提交新的申请。",
         result_pending: "成果评审中，结果会显示在这里。",
         result_revise: (left) => `按意见修改成果后重新提交，还可以改 ${left} 次。`,
-        full: "我们会联系你发放完整额度。",
+        full: "我们会联系你，按核定的计划继续资助。",
         result_reject: "这次成果没有通过。7 天后可以提交新的申请。",
       },
       verdictLabels: { pass: "通过", revise: "需修改", reject: "未通过" },
@@ -166,70 +177,79 @@
       },
       fieldErrors: {
         direction: "请选方向", question: "研究问题 10–300 字", baseline: "基线需要带链接",
-        evaluation: "评测 10–600 字", plan: "计划 20–1000 字", gpu_trial: "试跑卡时不在范围内",
+        evaluation: "评测 10–600 字", plan: "计划 20–1000 字", gpu_type: "卡型最多 40 字", gpu_trial: "试跑卡时不在范围内",
         gpu_full: "完整卡时需不少于试跑、且在上限内", portfolio: "代表作需要是链接", contact: "请留联系方式",
         repo: "需要 GitHub 仓库链接", log: "运行记录需要是链接", numbers: "关键数字 10–800 字", note: "补充说明过长",
       },
 
       ledgerLabel: "公开账本",
-      ledgerTitle: "评审记录",
-      ledgerIntro: "每份申请的编号、方向和评审状态都公开记录在 GitHub 上，申请内容和个人信息不公开。",
-      footLeft: "TOKEN-IGNITION // RSI 算力资助 // v4",
+      ledgerTitle: "课题记录",
+      ledgerIntro: "每个课题的编号、方向和评审状态都公开记录在 GitHub 上；立项课题的成果随仓库公开。联系方式等个人信息不公开。",
+      footLeft: "TOKEN-IGNITION // 开源 RSI 共同研究 // v4",
       footRight: "RESEARCH HOST: JOULE RESEARCH",
     },
 
     en: {
-      brand: "TOKEN-IGNITION // RSI COMPUTE GRANTS",
-      heroLead: "Compute grants for RSI research. You bring the idea and the baseline; we bring the GPUs.",
-      heroDef: "RSI (recursive self-improvement): AI research agents improving AI systems themselves, from evaluation and harnesses to training and the research loop.",
-      heroStats: (L, gpu) => [
-        ["RTX 5090", gpu.en.replace(/^RTX 5090 /, "")],
-        [`${L.trial_gpu_hours_max} GPU-h`, `trial · results in ${L.trial_days} days`],
-        [`${L.full_gpu_hours_max} GPU-h`, `full · delivered in ${L.full_days / 7} weeks`],
-        ["~15 min", "to apply · structured AI review"],
+      brand: "TOKEN-IGNITION // OPEN RSI RESEARCH",
+      heroLead: "An open, collaborative research program on RSI.",
+      heroDef: "RSI (recursive self-improvement): AI research agents improving AI systems themselves, from evaluation and harnesses to training and the research loop. We propose problems, run experiments and publish results together with the community; strong proposals receive GPU grants.",
+      heroPillars: [
+        ["Open", "Tasks, baselines, code and results are all public"],
+        ["Collaborative", "Contributors propose the problems and are credited for the results"],
+        ["GPU grants", "A100, H100, RTX 5090 and more, matched to each project"],
+        ["Structured review", "Item-by-item AI review, checked by the research group"],
       ],
-      heroCTA: "↓ apply for compute",
+      heroCTA: "↓ submit a proposal",
       heroCTA2: "see directions",
+
+      aboutLabel: "program",
+      aboutTitle: "What we build together",
+      aboutIntro: "Whether AI can improve AI takes many reproducible experiments to answer. No single lab can run them all; this is work for an open community.",
+      aboutItems: [
+        ["A public set of RSI tasks", "Every project becomes a reproducible task: a pinned baseline, a programmatic evaluation, clear data boundaries. Anyone can reproduce, compare and improve on it."],
+        ["A network of researchers", "People who propose problems and deliver results get seen by the community. Standout contributors are invited to join the research group."],
+        ["Public results", "Positive and negative results are both published. A refuted hypothesis is worth as much as a confirmed one."],
+      ],
 
       dirLabel: "directions",
       dirTitle: "Five areas of RSI research",
-      dirIntro: "Your baseline becomes the exam: start from a public, reproducible result and show, with a program-computed metric, that you beat it. No GPUs of your own needed.",
+      dirIntro: "Your baseline becomes the exam: start from a public, reproducible result and show, with a program-computed metric, that you beat it.",
       pathsTitle: "Two ways in",
       paths: [
         ["A · Bring a project you helped build", "A fully open project you co-built. You know its open questions and its reward-hacking risks better than anyone."],
         ["B · Start from a well-known project", "Pick an influential open project close to your expertise and design an RSI task around one of its experiments."],
       ],
 
-      flowLabel: "flow",
-      flowTitle: "Five steps, short cycles",
+      flowLabel: "join",
+      flowTitle: "From proposal to public results",
       flowItems: [
-        ["Apply", "Sign in with GitHub and fill 7 fields, about 15 minutes."],
+        ["Submit", "Sign in with GitHub and fill 7 fields, about 15 minutes."],
         ["AI review", "Evidence check, 7 hard gates and a quality review, usually within 24 hours. Revise in place, up to 3 times."],
-        ["Trial", "Pass and get an RTX 5090 container account; run the smallest experiment within 3 days."],
-        ["Results", "A public repo, the record of one complete run, and numbers against the baseline."],
-        ["Full quota", "Pass the results review and get compute for the full plan, delivered within 2 weeks."],
+        ["Launch and trial", "Accepted projects are listed publicly. If you need compute, we issue a GPU container account to run the smallest experiment first."],
+        ["Publish results", "A public repo, a complete run record, and numbers against the baseline."],
+        ["Full grant", "Pass the results review and the grant continues for the plan agreed in review."],
       ],
-      tierKeys: ["T1 · trial", "T2 · full", "T3 · research group"],
+      tierKeys: ["trial", "full", "research group"],
 
       reviewLabel: "review",
       reviewTitle: "Structured review",
-      reviewIntro: "Every application gets a review report in a fixed format, with evidence and a fix for each item, shown in your application status.",
+      reviewIntro: "Every proposal gets a review report in a fixed format, with evidence and a fix for each item, shown in your application status.",
       reportOutline: [
         ["Proposal summary", "One paragraph restating what you want to test, to confirm we read it the same way."],
         ["Evidence", "Your public work, the baseline repository and version, related work."],
         ["Hard gates", "Seven, each Pass / Fail with evidence and a fix. Any Fail means revise."],
-        ["Compute note", "GPU-hours estimated from your plan; does the trial fit the quota."],
+        ["Compute note", "GPU-hours estimated from your plan, with a suggested trial size."],
         ["Quality review", "Frontier relevance, scientific value, iteration practicality, statistical interpretation."],
         ["Decision", "Pass / Revise / Reject."],
       ],
       gatesTitle: "Seven hard gates",
       failTitle: "Common reasons for Fail",
       sampleTitle: "Sample report",
-      sampleIntro: "The full report one sample application received. The application is fictional.",
+      sampleIntro: "The full report one sample proposal received. The proposal is fictional.",
       sampleSummary: "show sample report",
 
-      applyLabel: "apply",
-      applyTitle: "Apply for compute",
+      applyLabel: "submit",
+      applyTitle: "Submit a proposal",
       applyIntro: "Sign in with GitHub first. Accounts younger than 30 days are not accepted yet.",
       authLogin: "sign in with GitHub",
       authLogout: "sign out",
@@ -241,15 +261,15 @@
       helperIntro: "Paste this into ChatGPT, Claude or any assistant you use, answer its questions, then copy the result into the form.",
       helperCopy: "copy prompt",
       helperCopied: "copied",
-      helperPrompt: (dirs) => `You are my RSI research application assistant. I am applying for GPUs (RTX 5090) from Token Ignition for recursive self-improvement (RSI) research.
+      helperPrompt: (dirs) => `You are my RSI research application assistant. I am submitting a proposal to Token Ignition, an open collaborative research program on recursive self-improvement (RSI), and applying for a GPU grant.
 Directions: ${dirs}.
 Ask me one question at a time and turn my idea into these 7 items, then print them in order:
 1. Direction: pick one from the list
 2. Research question: one sentence on what I want to test
 3. Baseline: public repo link + pinned commit or version + a reported number
 4. Metric and integrity: which data, which metric, computed by which program; how the test set is isolated; whether the agent could forge the score
-5. Experiment design: what the agent may change, what stays frozen, what it is compared against; what the 3-day trial runs; what success and failure look like
-6. Compute: trial GPU-hours (max 24) and full GPU-hours (max 200)
+5. Experiment design: what the agent may change, what stays frozen, what it is compared against; the smallest experiment for the trial; what success and failure look like
+6. Compute: which GPU (e.g. A100, H100, RTX 5090) and how many GPU-hours for the trial and the full plan
 7. Portfolio: one link to a paper, repo or competition result
 The review checks: RSI scope, applicant fit, traceable baseline, question and metric, action space, evaluation integrity, compute and timeline.
 If any item would fail, tell me and help me fix it.`,
@@ -266,22 +286,24 @@ If any item would fail, tell me and help me fix it.`,
       f4Hint: "Which data, which metric, computed by which program. How the test set is isolated; whether the agent could forge the score.",
       f4Ph: "e.g. pass@1 on a 100-task held-out split; the scorer runs separately from candidate code; the test set is hidden from the agent until scoring.",
       f5Label: "experiment design",
-      f5Hint: "What the agent may change, what stays frozen, what it is compared against. What the 3-day trial runs; what success and failure look like.",
+      f5Hint: "What the agent may change, what stays frozen, what it is compared against. The smallest experiment for the trial; what success and failure look like.",
       f5Ph: "Frozen Qwen2.5-7B weights; only the tool-calling flow changes; control is the original harness. Trial: ... Success: ... Failure: ...",
       f6Label: "compute",
-      f6Hint: "RTX 5090 GPU-hours. Trial max 24, full max 200.",
+      f6Hint: "Estimate from your plan. The GPU type and hours granted are set by the review and the compute available at the time.",
+      f6Type: "GPU type",
+      f6TypePh: "e.g. A100 80GB / H100 / RTX 5090",
       f6Trial: "trial (GPU hours)",
       f6Full: "full (GPU hours)",
       f7Label: "about you",
       f7Hint: "Your GitHub account is attached automatically. Add one piece of work and a way to reach you.",
       f7Portfolio: "portfolio link (paper, repo or competition)",
       f7PortfolioPh: "https://...",
-      f7Contact: "contact (only used to send your container account, never published)",
+      f7Contact: "contact (only used to reach you and issue compute, never published)",
       f7ContactPh: "email / WeChat / X",
       applyButton: "submit application",
       reviseButton: "submit revision",
 
-      resultTitle: "Submit results for full quota",
+      resultTitle: "Publish results for the full grant",
       r1Label: "public repository",
       r2Label: "run log",
       r2Hint: "A link to the log or report of one complete run.",
@@ -294,21 +316,21 @@ If any item would fail, tell me and help me fix it.`,
       statusLabels: {
         pending: "in review",
         revise: "needs changes",
-        pass: "passed · trial",
+        pass: "accepted · trial",
         reject: "not passed",
         result_pending: "results in review",
         result_revise: "results need changes",
-        full: "passed · full quota",
+        full: "passed · full grant",
         result_reject: "results not passed",
       },
       statusNext: {
         pending: "AI review usually finishes within 24 hours. The result will show up here.",
         revise: (left) => `Revise using the notes below and resubmit. ${left} revision(s) left.`,
-        pass: "We will send a trial container account to your contact. When done, submit results below.",
+        pass: "Your project is accepted. If you need compute, we will send a container account to your contact. When done, submit results below.",
         reject: "Not passed this time. You can submit a new application after 7 days.",
         result_pending: "Results in review. The outcome will show up here.",
         result_revise: (left) => `Revise your results and resubmit. ${left} revision(s) left.`,
-        full: "We will contact you about the full quota.",
+        full: "We will contact you to continue the grant for the agreed plan.",
         result_reject: "Results not passed this time. You can submit a new application after 7 days.",
       },
       verdictLabels: { pass: "pass", revise: "needs changes", reject: "not passed" },
@@ -335,15 +357,15 @@ If any item would fail, tell me and help me fix it.`,
       },
       fieldErrors: {
         direction: "pick a direction", question: "10–300 characters", baseline: "include a link",
-        evaluation: "10–600 characters", plan: "20–1000 characters", gpu_trial: "trial hours out of range",
+        evaluation: "10–600 characters", plan: "20–1000 characters", gpu_type: "at most 40 characters", gpu_trial: "trial hours out of range",
         gpu_full: "full hours must be ≥ trial and within the cap", portfolio: "must be a link", contact: "leave a contact",
         repo: "must be a GitHub repo link", log: "must be a link", numbers: "10–800 characters", note: "too long",
       },
 
       ledgerLabel: "public ledger",
-      ledgerTitle: "Review record",
-      ledgerIntro: "The id, direction and review status of every application are recorded publicly on GitHub. Application text and personal data are never published.",
-      footLeft: "TOKEN-IGNITION // RSI COMPUTE GRANTS // v4",
+      ledgerTitle: "Project record",
+      ledgerIntro: "The id, direction and review status of every proposal are recorded publicly on GitHub; results of accepted projects are published with their repositories. Contact details and personal data are never published.",
+      footLeft: "TOKEN-IGNITION // OPEN RSI RESEARCH // v4",
       footRight: "RESEARCH HOST: JOULE RESEARCH",
     },
   };
@@ -404,6 +426,10 @@ If any item would fail, tell me and help me fix it.`,
       b.setAttribute("aria-current", b.getAttribute("data-lang") === LANG ? "true" : "false");
     });
 
+    $("hero-stats").innerHTML = t.heroPillars
+      .map(([k, v]) => `<div class="stat"><div class="stat-k">${escapeHtml(k)}</div><div class="stat-v">${escapeHtml(v)}</div></div>`).join("");
+    $("about-list").innerHTML = t.aboutItems
+      .map(([k, v]) => `<div class="path"><div class="path-k">${escapeHtml(k)}</div><p>${escapeHtml(v)}</p></div>`).join("");
     $("paths").innerHTML = t.paths
       .map(([k, v]) => `<div class="path"><div class="path-k">${escapeHtml(k)}</div><p>${escapeHtml(v)}</p></div>`).join("");
     $("report-outline").innerHTML = t.reportOutline
@@ -413,8 +439,6 @@ If any item would fail, tell me and help me fix it.`,
       .join("");
 
     if (PROGRAM) {
-      $("hero-stats").innerHTML = t.heroStats(PROGRAM.limits, PROGRAM.gpu)
-        .map(([k, v]) => `<div class="stat"><div class="stat-k">${escapeHtml(k)}</div><div class="stat-v">${escapeHtml(v)}</div></div>`).join("");
       $("fail-list").innerHTML = PROGRAM.review.common_failures[LANG].map((x) => `<li>${escapeHtml(x)}</li>`).join("");
       $("dir-grid").innerHTML = activeDirections().map((d) => {
         const c = d[LANG];
@@ -565,6 +589,7 @@ If any item would fail, tell me and help me fix it.`,
     $("f-baseline").value = p.baseline;
     $("f-evaluation").value = p.evaluation;
     $("f-plan").value = p.plan;
+    $("f-gpu-type").value = p.gpu_type || "";
     $("f-gpu-trial").value = p.gpu_trial;
     $("f-gpu-full").value = p.gpu_full;
     $("f-portfolio").value = p.portfolio;
@@ -623,7 +648,7 @@ If any item would fail, tell me and help me fix it.`,
 
   const FIELD_IDS = {
     direction: "f-direction", question: "f-question", baseline: "f-baseline", evaluation: "f-evaluation",
-    plan: "f-plan", gpu_trial: "f-gpu-trial", gpu_full: "f-gpu-full", portfolio: "f-portfolio", contact: "f-contact",
+    plan: "f-plan", gpu_type: "f-gpu-type", gpu_trial: "f-gpu-trial", gpu_full: "f-gpu-full", portfolio: "f-portfolio", contact: "f-contact",
     repo: "r-repo", log: "r-log", numbers: "r-numbers", note: "r-note",
   };
 
@@ -689,6 +714,7 @@ If any item would fail, tell me and help me fix it.`,
         baseline: val("f-baseline"),
         evaluation: val("f-evaluation"),
         plan: val("f-plan"),
+        gpu_type: val("f-gpu-type"),
         gpu_trial: Number(val("f-gpu-trial")),
         gpu_full: Number(val("f-gpu-full")),
         portfolio: val("f-portfolio"),
@@ -740,7 +766,7 @@ If any item would fail, tell me and help me fix it.`,
     const el = document.getElementById("ascii-art");
     if (!el) return;
 
-    const cols = window.innerWidth < 700 ? 56 : 88;
+    let cols = window.innerWidth < 700 ? 56 : 88;
     const rows = 22;
     const chars = " ...::--==++**#@".split("");
     // We'll animate a slow t over time.
@@ -781,12 +807,13 @@ If any item would fail, tell me and help me fix it.`,
       frame();
     }, 220);
 
-    // redraw on resize
+    // Redraw at the new width. Height-only resizes (mobile address bar) are ignored.
     let resizeTimer;
     window.addEventListener("resize", () => {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => {
-        location.reload(); // simplest: re-layout cols
+        const next = window.innerWidth < 700 ? 56 : 88;
+        if (next !== cols) { cols = next; frame(); }
       }, 300);
     });
   }

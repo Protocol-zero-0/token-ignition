@@ -125,6 +125,7 @@ export default async function handler(req: Request): Promise<Response> {
     baseline: str(body, "baseline"),
     evaluation: str(body, "evaluation"),
     plan: str(body, "plan"),
+    gpu_type: str(body, "gpu_type"),
     gpu_trial: Math.floor(Number(body.gpu_trial)),
     gpu_full: Math.floor(Number(body.gpu_full)),
     portfolio: str(body, "portfolio"),
@@ -135,6 +136,7 @@ export default async function handler(req: Request): Promise<Response> {
   if (!between(p.baseline, 10, 600) || !URL_RE.test(p.baseline)) details.push("baseline");
   if (!between(p.evaluation, 10, 600)) details.push("evaluation");
   if (!between(p.plan, 20, 1000)) details.push("plan");
+  if ((p.gpu_type || "").length > 40) details.push("gpu_type");
   if (!(p.gpu_trial >= 1 && p.gpu_trial <= L.trial_gpu_hours_max)) details.push("gpu_trial");
   if (!(p.gpu_full >= p.gpu_trial && p.gpu_full <= L.full_gpu_hours_max)) details.push("gpu_full");
   if (!URL_RE.test(p.portfolio) || p.portfolio.length > 300) details.push("portfolio");

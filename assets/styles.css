@@ -977,3 +977,7 @@ main {
 }
 .topbar { background: rgba(11, 13, 17, 0.94); border-bottom: 1px solid var(--border); }
 .ledger-empty { color: var(--fg-mid); font-size: 13px; padding: 14px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin: 0; }
+.about-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+@media (max-width: 900px) { .about-list { grid-template-columns: 1fr; } }
+.stat-k { font-size: 17px; }
+#f-gpu-type { margin-bottom: 10px; }

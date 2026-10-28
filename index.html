@@ -4,14 +4,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-    <title>TOKEN-IGNITION · RSI 算力资助</title>
-    <meta name="description" content="Token Ignition：RSI（递归自我改进）研究的 GPU 资助。RSI 评测、Harness 优化、后训练内化、自动化科研。RTX 5090，试跑 24 卡时、3 天出结果；AI 结构化评审。 GPU grants for recursive self-improvement (RSI) research." />
+    <title>TOKEN-IGNITION · 开源 RSI 共同研究</title>
+    <meta name="description" content="Token Ignition：开源的 RSI（递归自我改进）共同研究计划。RSI 评测、Harness 优化、后训练内化、自动化科研；任务、代码和结果全部公开，好的课题提供 GPU 资助。 An open, collaborative research program on recursive self-improvement, with GPU grants for strong proposals." />
     <link rel="canonical" href="https://token-ignition.joulebeat.com/" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://token-ignition.joulebeat.com/" />
     <meta property="og:site_name" content="JouleBeat" />
-    <meta property="og:title" content="TOKEN-IGNITION · RSI 算力资助：你出想法和基线，我们出 GPU" />
-    <meta property="og:description" content="RSI 评测、Harness 优化、后训练内化、自动化科研。约 15 分钟提交申请，AI 结构化评审，通过即发 RTX 5090 试跑额度。" />
+    <meta property="og:title" content="TOKEN-IGNITION · 开源 RSI 共同研究" />
+    <meta property="og:description" content="和社区一起做 RSI 研究：提交课题，AI 结构化评审，好的课题提供 A100、H100、RTX 5090 等 GPU 资助，成果公开。" />
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -48,10 +48,21 @@
         </div>
       </section>
 
+      <!-- ABOUT -->
+      <section id="about" class="section">
+        <div class="section-meta">
+          <span class="section-num">01</span>
+          <span class="section-label" data-i18n="aboutLabel"></span>
+        </div>
+        <h2 class="section-title" data-i18n="aboutTitle"></h2>
+        <p class="lede" data-i18n="aboutIntro"></p>
+        <div class="about-list" id="about-list"></div>
+      </section>
+
       <!-- DIRECTIONS -->
       <section id="directions" class="section">
         <div class="section-meta">
-          <span class="section-num">01</span>
+          <span class="section-num">02</span>
           <span class="section-label" data-i18n="dirLabel"></span>
         </div>
         <h2 class="section-title" data-i18n="dirTitle"></h2>
@@ -64,7 +75,7 @@
       <!-- FLOW -->
       <section id="flow" class="section">
         <div class="section-meta">
-          <span class="section-num">02</span>
+          <span class="section-num">03</span>
           <span class="section-label" data-i18n="flowLabel"></span>
         </div>
         <h2 class="section-title" data-i18n="flowTitle"></h2>
@@ -75,7 +86,7 @@
       <!-- REVIEW -->
       <section id="review" class="section">
         <div class="section-meta">
-          <span class="section-num">03</span>
+          <span class="section-num">04</span>
           <span class="section-label" data-i18n="reviewLabel"></span>
         </div>
         <h2 class="section-title" data-i18n="reviewTitle"></h2>
@@ -102,7 +113,7 @@
       <!-- APPLY -->
       <section id="apply" class="section submit-section">
         <div class="section-meta">
-          <span class="section-num">04</span>
+          <span class="section-num">05</span>
           <span class="section-label" data-i18n="applyLabel"></span>
         </div>
         <h2 class="section-title" data-i18n="applyTitle"></h2>
@@ -157,6 +168,8 @@
           <div class="field">
             <label class="field-label"><span class="field-index">[6/7]</span> <span data-i18n="f6Label"></span></label>
             <div class="field-hint" data-i18n="f6Hint"></div>
+            <label class="field-sub-label" for="f-gpu-type" data-i18n="f6Type"></label>
+            <input id="f-gpu-type" type="text" maxlength="40" data-i18n-ph="f6TypePh" />
             <div class="field-pair">
               <label class="field-sub-label" for="f-gpu-trial" data-i18n="f6Trial"></label>
               <input id="f-gpu-trial" type="number" min="1" step="1" />
@@ -214,7 +227,7 @@
       <!-- LEDGER -->
       <section id="ledger" class="section">
         <div class="section-meta">
-          <span class="section-num">05</span>
+          <span class="section-num">06</span>
           <span class="section-label" data-i18n="ledgerLabel"></span>
         </div>
         <h2 class="section-title" data-i18n="ledgerTitle"></h2>
