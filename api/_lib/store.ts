@@ -8,6 +8,8 @@ import type { SessionUser } from "./auth";
 
 export type Gate = { id: string; status: "pass" | "fail"; evidence: string; fix: string };
 
+// v4 reports follow a fixed structure: summary, evidence, hard gates,
+// compute note, quality review, decision. v3 reviews lack the optional parts.
 export type Review = {
   stage: "proposal" | "result";
   at: number;
@@ -15,7 +17,10 @@ export type Review = {
   verdict: "pass" | "revise" | "reject";
   value: "high" | "medium" | "low";
   summary: string;
+  evidence?: Array<{ id: string; finding: string }>;
   gates: Gate[];
+  compute_note?: string;
+  quality?: Array<{ id: string; note: string }>;
 };
 
 export type Proposal = {

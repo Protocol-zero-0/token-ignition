@@ -1,106 +1,245 @@
 {
-  "version": 3,
-  "note": "Edit this file to change funded directions, quotas and intake limits. The page, the apply API and the AI reviewer all read it.",
-  "limits": {
-    "daily_intake": 50,
-    "new_application_every_days": 7,
-    "max_revisions": 3,
-    "min_github_account_age_days": 30,
-    "trial_gpu_hours_max": 200,
-    "full_gpu_hours_max": 5000
+ "version": 4,
+ "note": "Edit this file to change funded directions, quotas and intake limits. The page, the apply API and the AI reviewer all read it.",
+ "limits": {
+  "daily_intake": 50,
+  "new_application_every_days": 7,
+  "max_revisions": 3,
+  "min_github_account_age_days": 30,
+  "trial_gpu_hours_max": 24,
+  "full_gpu_hours_max": 200,
+  "max_gpus_per_job": 8,
+  "trial_days": 3,
+  "full_days": 14
+ },
+ "quota": {
+  "trial": {
+   "zh": "≤ 24 卡时 · 3 天内跑通最小实验",
+   "en": "≤ 24 GPU-hours · smallest experiment within 3 days"
   },
-  "quota": {
-    "trial": {
-      "zh": "试跑额度：够跑通你计划里最小的那个实验。",
-      "en": "Trial quota: enough to run the smallest experiment in your plan."
-    },
-    "full": {
-      "zh": "完整额度：按你申请的计划给。",
-      "en": "Full quota: sized to the plan you proposed."
-    },
-    "research": {
-      "zh": "成果突出的，长期给卡，邀请加入研究组。",
-      "en": "Standout results get long-term compute and an invitation to the research group."
-    }
+  "full": {
+   "zh": "≤ 200 卡时 · 2 周内交付完整结果",
+   "en": "≤ 200 GPU-hours · full result within 2 weeks"
   },
-  "directions": [
-    {
-      "id": "eval",
-      "active": true,
-      "zh": {
-        "title": "评测与 benchmark",
-        "desc": "怎么衡量 AI 做研究、改进自己的能力。",
-        "examples": ["研究型任务的评测集", "自我改进速度的度量", "防刷分、防作弊的评测设计"]
-      },
-      "en": {
-        "title": "Evaluation & benchmarks",
-        "desc": "Measuring how well AI does research and improves itself.",
-        "examples": ["Eval sets built from research tasks", "Metrics for self-improvement speed", "Eval designs that resist gaming"]
-      }
-    },
-    {
-      "id": "harness",
-      "active": true,
-      "zh": {
-        "title": "Harness 自进化",
-        "desc": "让 agent 外面那层框架，在真实任务上自己变强。",
-        "examples": ["自动改提示词、工具和流程", "失败记录驱动的迭代", "改进能否跨模型、跨任务迁移"]
-      },
-      "en": {
-        "title": "Self-evolving harnesses",
-        "desc": "Agent scaffolds that get better on real tasks by themselves.",
-        "examples": ["Auto-editing prompts, tools and workflows", "Iteration driven by failure logs", "Does the gain transfer across models and tasks"]
-      }
-    },
-    {
-      "id": "weights",
-      "active": true,
-      "zh": {
-        "title": "把能力训进模型",
-        "desc": "把 harness 学到的东西，压进模型权重。",
-        "examples": ["轨迹蒸馏", "后训练和强化学习", "去掉 harness 后能力还剩多少"]
-      },
-      "en": {
-        "title": "Training it into the weights",
-        "desc": "Compressing what the harness learned into model weights.",
-        "examples": ["Trajectory distillation", "Post-training and RL", "How much survives once the harness is removed"]
-      }
-    },
-    {
-      "id": "science",
-      "active": true,
-      "zh": {
-        "title": "AI 做科研",
-        "desc": "让 AI 自己提出、执行、验证研究想法。",
-        "examples": ["自动跑实验", "判断研究结论对不对的验证器", "从论文到可复现结果"]
-      },
-      "en": {
-        "title": "AI that does research",
-        "desc": "AI that proposes, runs and verifies research ideas.",
-        "examples": ["Automated experiments", "Verifiers for research claims", "From paper to reproducible result"]
-      }
-    },
-    {
-      "id": "other",
-      "active": true,
-      "zh": {
-        "title": "其他：让 AI 自己变强",
-        "desc": "不在上面，但属于这个大方向的，也欢迎。",
-        "examples": []
-      },
-      "en": {
-        "title": "Other: making AI improve itself",
-        "desc": "Not listed above but within this frame? Also welcome.",
-        "examples": []
-      }
-    }
+  "research": {
+   "zh": "成果突出者长期给卡，邀请加入研究组",
+   "en": "Standout work: long-term compute and a research-group invitation"
+  }
+ },
+ "directions": [
+  {
+   "id": "eval",
+   "active": true,
+   "zh": {
+    "title": "RSI 评测",
+    "desc": "衡量研究 agent 能不能超过人写的基线。",
+    "examples": [
+     "把开源项目做成可复现的 RSI 任务",
+     "防刷分的评测设计",
+     "留出集、多种子与配对检验协议"
+    ]
+   },
+   "en": {
+    "title": "RSI evaluation",
+    "desc": "Measure whether research agents beat human-written baselines.",
+    "examples": [
+     "Turn an open project into a reproducible RSI task",
+     "Evaluations that resist score hacking",
+     "Held-out splits, multiple seeds, paired tests"
+    ]
+   }
+  },
+  {
+   "id": "harness",
+   "active": true,
+   "zh": {
+    "title": "Harness 优化",
+    "desc": "冻结模型权重，只改 agent 外层：提示、工具、上下文、恢复策略。",
+    "examples": [
+     "由失败轨迹驱动的 harness 搜索",
+     "harness 与评测协同进化",
+     "改进能否跨模型、跨任务迁移"
+    ]
+   },
+   "en": {
+    "title": "Harness optimization",
+    "desc": "Frozen weights; change only the agent's outer loop: prompts, tools, context, recovery.",
+    "examples": [
+     "Harness search driven by failure traces",
+     "Harness and benchmark co-evolution",
+     "Transfer across models and tasks"
+    ]
+   }
+  },
+  {
+   "id": "weights",
+   "active": true,
+   "zh": {
+    "title": "后训练内化",
+    "desc": "把 harness 学到的能力，通过蒸馏或强化学习写进权重。",
+    "examples": [
+     "轨迹蒸馏",
+     "可验证奖励的 RL",
+     "去掉 harness 后能力保留多少"
+    ]
+   },
+   "en": {
+    "title": "Post-training internalization",
+    "desc": "Move what the harness learned into the weights via distillation or RL.",
+    "examples": [
+     "Trajectory distillation",
+     "RL with verifiable rewards",
+     "How much survives without the harness"
+    ]
+   }
+  },
+  {
+   "id": "science",
+   "active": true,
+   "zh": {
+    "title": "自动化科研",
+    "desc": "研究 agent 自己提出、执行、验证实验。",
+    "examples": [
+     "自动复现论文结果",
+     "研究结论的程序化验证器",
+     "实验选题与算力分配策略"
+    ]
+   },
+   "en": {
+    "title": "Automated research",
+    "desc": "Research agents that propose, run and verify experiments.",
+    "examples": [
+     "Automated paper reproduction",
+     "Programmatic verifiers for research claims",
+     "Experiment selection and compute allocation"
+    ]
+   }
+  },
+  {
+   "id": "other",
+   "active": true,
+   "zh": {
+    "title": "其他 RSI",
+    "desc": "基础模型开发的任何一层：数据、系统、推理、垂直领域模型。",
+    "examples": []
+   },
+   "en": {
+    "title": "Other RSI",
+    "desc": "Any layer of model development: data, systems, inference, vertical models.",
+    "examples": []
+   }
+  }
+ ],
+ "review_gates": [
+  {
+   "id": "scope",
+   "zh": "RSI 范围",
+   "en": "RSI scope",
+   "desc_zh": "研究对象是 AI 系统本身，属于所选方向。",
+   "desc_en": "The object of study is the AI system itself, within the chosen direction."
+  },
+  {
+   "id": "applicant",
+   "zh": "申请人能力匹配",
+   "en": "Applicant fit",
+   "desc_zh": "公开作品能说明你做得了这件事。",
+   "desc_en": "Public work shows you can do this."
+  },
+  {
+   "id": "baseline",
+   "zh": "基线可追溯",
+   "en": "Traceable baseline",
+   "desc_zh": "公开仓库、固定版本、有报告过的数字。",
+   "desc_en": "Public repo, pinned version, a reported number."
+  },
+  {
+   "id": "metric",
+   "zh": "问题与指标",
+   "en": "Question and metric",
+   "desc_zh": "问题清楚，指标由程序在指定数据上算出。",
+   "desc_en": "A clear question; a metric computed by a program on named data."
+  },
+  {
+   "id": "action_space",
+   "zh": "动作空间",
+   "en": "Action space",
+   "desc_zh": "写清能改什么、什么冻结、和谁对照。",
+   "desc_en": "What may change, what stays frozen, what it is compared against."
+  },
+  {
+   "id": "integrity",
+   "zh": "评测完整性",
+   "en": "Evaluation integrity",
+   "desc_zh": "没有伪造分数的路径，测试集不可见。",
+   "desc_en": "No path to forge scores; the test set stays hidden."
+  },
+  {
+   "id": "compute",
+   "zh": "算力与周期",
+   "en": "Compute and timeline",
+   "desc_zh": "试跑放得进 24 卡时、3 天；成败都能观察到。",
+   "desc_en": "The trial fits 24 GPU-hours and 3 days; success and failure are both observable."
+  }
+ ],
+ "gpu": {
+  "zh": "RTX 5090 32GB · 单机 8 卡",
+  "en": "RTX 5090 32GB · 8 GPUs per node"
+ },
+ "review": {
+  "evidence": [
+   {
+    "id": "applicant",
+    "zh": "申请人公开作品",
+    "en": "Applicant's public work"
+   },
+   {
+    "id": "baseline",
+    "zh": "基线仓库与版本",
+    "en": "Baseline repository and version"
+   },
+   {
+    "id": "related",
+    "zh": "相关工作",
+    "en": "Related work"
+   }
   ],
-  "review_gates": [
-    { "id": "direction", "zh": "方向符合", "en": "Fits a funded direction" },
-    { "id": "baseline", "zh": "基线公开、可追溯", "en": "Public, traceable baseline" },
-    { "id": "metric", "zh": "指标能用程序验证", "en": "Machine-checkable metric" },
-    { "id": "feasibility", "zh": "计划和算力匹配", "en": "Plan matches compute" },
-    { "id": "applicant", "zh": "申请人能力匹配", "en": "Applicant fit" },
-    { "id": "value", "zh": "对方向的价值", "en": "Value to the direction" }
-  ]
+  "quality": [
+   {
+    "id": "frontier",
+    "zh": "前沿相关性",
+    "en": "Frontier relevance"
+   },
+   {
+    "id": "value",
+    "zh": "科学价值",
+    "en": "Scientific value"
+   },
+   {
+    "id": "iteration",
+    "zh": "迭代可行性",
+    "en": "Iteration practicality"
+   },
+   {
+    "id": "statistics",
+    "zh": "统计解释力",
+    "en": "Statistical interpretation"
+   }
+  ],
+  "common_failures": {
+   "zh": [
+    "评测进程会执行候选代码，或日志可被改写，分数存在伪造路径",
+    "基线没有固定版本，无法复现",
+    "对照组和实验组用的不是同一份配置",
+    "指标依赖人工判断，比如“新颖性”",
+    "干活阶段能联网，或能看到最终测试集"
+   ],
+   "en": [
+    "The scorer executes candidate code or logs are writable, so scores can be forged",
+    "The baseline is not pinned and cannot be reproduced",
+    "Control and treatment do not share one frozen configuration",
+    "The metric needs human judgement, e.g. 'novelty'",
+    "The agent can reach the network or the final test set while working"
+   ]
+  }
+ }
 }

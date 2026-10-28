@@ -4,7 +4,7 @@ import { json } from "../_lib/http";
 import { Gate, Review, Status, adminAuthed, getRecord, mirrorToLedger, saveRecord } from "../_lib/store";
 
 // POST /api/admin/review · the AI reviewer writes its verdict back (Bearer ADMIN_TOKEN).
-// body: { id, stage, verdict, value, summary, gates[], model }
+// body: { id, stage, verdict, value, summary, evidence[], gates[], compute_note, quality[], model }
 
 export const config = { runtime: "edge" };
 
@@ -39,7 +39,15 @@ export default async function handler(req: Request): Promise<Response> {
     fix: clip(g?.fix, 400),
   }));
   const now = Math.floor(Date.now() / 1000);
-  const review: Review = { stage, at: now, model: clip(b?.model, 60), verdict, value, summary: clip(b?.summary, 600), gates };
+  const notes = (list: unknown, key: "finding" | "note", n: number) => (Array.isArray(list) ? list : [])
+    .slice(0, 6).map((x: any) => ({ id: clip(x?.id, 40), [key]: clip(x?.[key], n) }));
+  const review: Review = {
+    stage, at: now, model: clip(b?.model, 60), verdict, value, summary: clip(b?.summary, 800),
+    evidence: notes(b?.evidence, "finding", 500) as Review["evidence"],
+    gates,
+    compute_note: clip(b?.compute_note, 600),
+    quality: notes(b?.quality, "note", 400) as Review["quality"],
+  };
   const next = { ...rec, status: NEXT[stage][verdict], reviews: [...rec.reviews, review], updated_at: now };
   await saveRecord(next, false);
   await mirrorToLedger(next);

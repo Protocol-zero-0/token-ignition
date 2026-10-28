@@ -4,14 +4,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-    <title>TOKEN-IGNITION · 申请算力</title>
-    <meta name="description" content="Token Ignition：我们出 GPU，你来做让 AI 自己变强的研究。评测、harness 自进化、把能力训进模型、AI 做科研。约 15 分钟提交申请，AI 逐项评审。 We fund GPU compute for research on AI that improves itself." />
+    <title>TOKEN-IGNITION · RSI 算力资助</title>
+    <meta name="description" content="Token Ignition：RSI（递归自我改进）研究的 GPU 资助。RSI 评测、Harness 优化、后训练内化、自动化科研。RTX 5090，试跑 24 卡时、3 天出结果；AI 结构化评审。 GPU grants for recursive self-improvement (RSI) research." />
     <link rel="canonical" href="https://token-ignition.joulebeat.com/" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://token-ignition.joulebeat.com/" />
     <meta property="og:site_name" content="JouleBeat" />
-    <meta property="og:title" content="TOKEN-IGNITION · 我们出 GPU，你来做让 AI 自己变强的研究" />
-    <meta property="og:description" content="评测、harness 自进化、把能力训进模型、AI 做科研。约 15 分钟提交申请，AI 逐项评审，通过即发试跑额度。" />
+    <meta property="og:title" content="TOKEN-IGNITION · RSI 算力资助：你出想法和基线，我们出 GPU" />
+    <meta property="og:description" content="RSI 评测、Harness 优化、后训练内化、自动化科研。约 15 分钟提交申请，AI 结构化评审，通过即发 RTX 5090 试跑额度。" />
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -38,8 +38,9 @@
         <pre id="ascii-art" class="ascii-art" aria-hidden="true"></pre>
         <div class="hero-text">
           <h1 class="title">TOKEN-IGNITION</h1>
-          <p class="subtitle" data-i18n="heroSubtitle"></p>
-          <ul class="hero-facts" id="hero-facts"></ul>
+          <p class="hero-lead" data-i18n="heroLead"></p>
+          <p class="hero-def" data-i18n="heroDef"></p>
+          <div class="hero-stats" id="hero-stats"></div>
           <div class="hero-actions">
             <a href="#apply" class="cta" data-i18n="heroCTA"></a>
             <a href="#directions" class="cta cta-ghost" data-i18n="heroCTA2"></a>
@@ -54,8 +55,10 @@
           <span class="section-label" data-i18n="dirLabel"></span>
         </div>
         <h2 class="section-title" data-i18n="dirTitle"></h2>
-        <p class="prose" data-i18n="dirIntro"></p>
+        <p class="lede" data-i18n="dirIntro"></p>
         <div class="dir-grid" id="dir-grid"></div>
+        <h3 class="sub-title" data-i18n="pathsTitle"></h3>
+        <div class="paths" id="paths"></div>
       </section>
 
       <!-- FLOW -->
@@ -76,8 +79,24 @@
           <span class="section-label" data-i18n="reviewLabel"></span>
         </div>
         <h2 class="section-title" data-i18n="reviewTitle"></h2>
-        <p class="prose" data-i18n="reviewIntro"></p>
-        <ol class="kv-list" id="gate-list"></ol>
+        <p class="lede" data-i18n="reviewIntro"></p>
+        <ol class="report-outline" id="report-outline"></ol>
+        <h3 class="sub-title" data-i18n="gatesTitle"></h3>
+        <ol class="gate-spec" id="gate-list"></ol>
+        <div class="review-cols">
+          <div>
+            <h3 class="sub-title" data-i18n="failTitle"></h3>
+            <ul class="fail-list" id="fail-list"></ul>
+          </div>
+          <div>
+            <h3 class="sub-title" data-i18n="sampleTitle"></h3>
+            <p class="lede small" data-i18n="sampleIntro"></p>
+          </div>
+        </div>
+        <details class="helper sample">
+          <summary data-i18n="sampleSummary"></summary>
+          <div id="sample-report"></div>
+        </details>
       </section>
 
       <!-- APPLY -->
@@ -128,7 +147,7 @@
           <div class="field">
             <label class="field-label" for="f-evaluation"><span class="field-index">[4/7]</span> <span data-i18n="f4Label"></span></label>
             <div class="field-hint" data-i18n="f4Hint"></div>
-            <textarea id="f-evaluation" rows="3" maxlength="600" data-i18n-ph="f4Ph"></textarea>
+            <textarea id="f-evaluation" rows="4" maxlength="600" data-i18n-ph="f4Ph"></textarea>
           </div>
           <div class="field">
             <label class="field-label" for="f-plan"><span class="field-index">[5/7]</span> <span data-i18n="f5Label"></span></label>

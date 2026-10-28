@@ -74,12 +74,13 @@
     return `T-${Math.floor(d / 86400)}d`;
   }
 
-  function render(rows) {
+  // Only v3+ GPU applications are shown; earlier test entries stay in the
+  // repository history but are not part of this program's record.
+  function render(all) {
+    const rows = all.filter((r) => r.kind === "gpu-proposal");
     if (!rows.length) {
-      host.innerHTML =
-        '<div class="ledger-row"><div class="hash">—</div>' +
-        '<div class="time">waiting for first submission</div>' +
-        '<div class="status">—</div></div>';
+      const zh = document.documentElement.lang !== "en";
+      host.innerHTML = `<p class="ledger-empty">${zh ? "首批申请评审中，记录会出现在这里。" : "The first applications are in review. Records will appear here."}</p>`;
       return;
     }
     host.innerHTML = rows
@@ -91,7 +92,7 @@
             <a href="${htmlUrl("submissions/" + r.submission_id + ".json")}"
                target="_blank" rel="noopener">0x${escapeHtml(r.submission_id)}</a>
           </div>
-          <div class="time">${escapeHtml(timeAgo(r.ts))}</div>
+          <div class="time">${escapeHtml(timeAgo(r.ts))}${r.direction ? " · " + escapeHtml(r.direction) : ""}</div>
           <div class="status ${escapeHtml(r.verdict || "pending")}">${escapeHtml(label)}</div>
         </div>`;
       })

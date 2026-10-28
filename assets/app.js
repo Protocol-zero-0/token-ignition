@@ -10,30 +10,54 @@
 
   const I18N = {
     zh: {
-      brand: "TOKEN-IGNITION // 算力资助",
-      heroSubtitle: "我们出 GPU，你来做让 AI 自己变强的研究。",
-      heroFacts: ["免费 GPU，通过评审即发", "方向是一个框，题目你自己定", "约 15 分钟提交，AI 逐项评审"],
+      brand: "TOKEN-IGNITION // RSI 算力资助",
+      heroLead: "RSI 研究的算力资助。你出想法和基线，我们出 GPU。",
+      heroDef: "RSI（recursive self-improvement，递归自我改进）：让 AI 研究 agent 去改进 AI 系统本身，包括评测、harness、训练和科研流程。",
+      heroStats: (L, gpu) => [
+        ["RTX 5090", gpu.zh.replace(/^RTX 5090 /, "")],
+        [`${L.trial_gpu_hours_max} 卡时`, `试跑 · ${L.trial_days} 天出结果`],
+        [`${L.full_gpu_hours_max} 卡时`, `完整 · ${L.full_days / 7} 周交付`],
+        ["~15 分钟", "申请 · AI 结构化评审"],
+      ],
       heroCTA: "↓ 申请算力",
       heroCTA2: "看方向",
 
       dirLabel: "方向",
-      dirTitle: "当前资助的方向",
-      dirIntro: "在这个框里，题目你自己定。下面的例子只是参考。",
+      dirTitle: "资助五类 RSI 研究",
+      dirIntro: "你的基线就是考卷：从一个公开、可复现的结果出发，用程序算出的指标证明你超过了它。不需要自带 GPU。",
+      pathsTitle: "两种入口",
+      paths: [
+        ["A · 带来你参与过的项目", "一个你参与构建、完全开源的项目。它的开放问题和刷分漏洞，你比任何人都清楚。"],
+        ["B · 从领域知名项目出发", "选一个和你专长相关的知名开源项目，围绕它的一个实验设计 RSI 任务。"],
+      ],
 
       flowLabel: "流程",
-      flowTitle: "从申请到拿卡",
+      flowTitle: "五步，短周期",
       flowItems: [
-        ["申请", "GitHub 登录，填 7 项，每项一两句。"],
-        ["AI 评审", "逐项给出通过或需修改，并写明怎么改。可以在原申请上改，最多改 3 次。"],
-        ["试跑", "通过后，我们按你留的联系方式发一个带额度的容器账号。"],
-        ["交成果", "公开仓库、一份运行记录、和基线对比的数字。"],
-        ["完整额度", "复审通过，按你的计划给卡。成果突出的，长期给卡、邀请加入研究组。"],
+        ["申请", "GitHub 登录，填 7 项，约 15 分钟。"],
+        ["AI 评审", "证据核查、7 道硬门槛、质量评审，通常 24 小时内出报告。可在原申请上修改，最多 3 次。"],
+        ["试跑", "通过即发 RTX 5090 容器账号，3 天内跑通最小实验。"],
+        ["交成果", "公开仓库、一次完整运行的记录、与基线对比的数字。"],
+        ["完整额度", "成果复审通过，按计划给卡，2 周内交付。"],
       ],
-      tierKeys: ["gate.1 试跑", "gate.2 完整", "gate.3 研究组"],
+      tierKeys: ["T1 · 试跑", "T2 · 完整", "T3 · 研究组"],
 
       reviewLabel: "评审",
-      reviewTitle: "AI 评审看这 6 项",
-      reviewIntro: "每一项都会回一句证据和一句修改建议，结果显示在你的申请状态里。",
+      reviewTitle: "结构化评审",
+      reviewIntro: "每份申请收到一份格式固定的评审报告，逐项写明证据和改法，显示在你的申请状态里。",
+      reportOutline: [
+        ["提案复述", "用一段话复述你要验证什么，确认理解一致。"],
+        ["证据核查", "申请人公开作品、基线仓库与版本、相关工作。"],
+        ["硬门槛", "7 道，逐项 Pass / Fail，附证据和改法。任何一道 Fail 即需修改。"],
+        ["算力估算", "按你的计划估算卡时，判断试跑是否放得进额度。"],
+        ["质量评审", "前沿相关性、科学价值、迭代可行性、统计解释力。"],
+        ["结论", "通过 / 需修改 / 不通过。"],
+      ],
+      gatesTitle: "7 道硬门槛",
+      failTitle: "常见不通过原因",
+      sampleTitle: "报告示例",
+      sampleIntro: "下面是一份示例申请收到的完整报告，申请内容为虚构。",
+      sampleSummary: "展开示例报告",
 
       applyLabel: "申请",
       applyTitle: "申请算力",
@@ -48,17 +72,18 @@
       helperIntro: "把下面这段复制到 ChatGPT、Claude 或任何你常用的 AI 里，回答它的追问，再把结果填进表单。",
       helperCopy: "复制提示词",
       helperCopied: "已复制",
-      helperPrompt: (dirs) => `你是我的研究申请助手。我要申请 Token Ignition 的免费 GPU，做"让 AI 自己变强"方向的研究。
+      helperPrompt: (dirs) => `你是我的 RSI 研究申请助手。我要申请 Token Ignition 的 GPU（RTX 5090），做 RSI（递归自我改进）方向的研究。
 可选方向：${dirs}。
-请一次问我一个问题，帮我把想法整理成下面 7 项，每项一两句，最后按顺序输出：
+请一次问我一个问题，帮我把想法整理成下面 7 项，最后按顺序输出：
 1. 方向：从上面选一个
 2. 研究问题：一句话说清要验证什么
-3. 基线：从哪个公开项目、模型或结果出发，给链接和版本
-4. 评测：用什么指标、在什么数据上算，必须能用程序算出来
-5. 两周计划：做什么；成功会看到什么，失败会看到什么
-6. 算力：试跑要多少 GPU 卡时，完整要多少
+3. 基线：公开仓库链接 + 固定 commit 或版本 + 已报告的数字
+4. 指标与防作弊：在什么数据上、用什么指标、由哪个程序算；测试集怎么隔离；agent 有没有办法伪造分数
+5. 实验设计：agent 能改什么、什么冻结、和谁对照；试跑 3 天内跑什么；成功和失败各会看到什么
+6. 算力：试跑多少卡时（上限 24），完整多少卡时（上限 200）
 7. 代表作：一个论文、仓库或比赛的链接
-如果我的想法里基线不公开、指标没法用程序算，请直接指出并帮我改。`,
+评审会逐项检查：RSI 范围、申请人能力、基线可追溯、问题与指标、动作空间、评测完整性、算力与周期。
+如果哪一项过不了，请直接指出并帮我改。`,
 
       f1Label: "方向",
       f1Hint: "选一个最接近的。",
@@ -68,14 +93,14 @@
       f3Label: "基线",
       f3Hint: "从哪个公开项目、模型或结果出发。给链接和版本。",
       f3Ph: "例：https://github.com/... @ commit abc123，原论文报告的分数 41.0%",
-      f4Label: "评测",
-      f4Hint: "用什么指标、在什么数据上算。必须能用程序算出来。",
-      f4Ph: "例：在公开测试集的留出部分上算通过率，脚本自动判分。",
-      f5Label: "两周计划",
-      f5Hint: "做什么；成功会看到什么，失败会看到什么。",
-      f5Ph: "第 1 周复现基线……第 2 周……成功：……失败：……",
+      f4Label: "指标与防作弊",
+      f4Hint: "在什么数据上、用什么指标、由哪个程序算。测试集怎么隔离，agent 有没有办法伪造分数。",
+      f4Ph: "例：在 100 题留出集上算 pass@1，评分进程独立于候选代码运行；测试集在评分前对 agent 不可见。",
+      f5Label: "实验设计",
+      f5Hint: "agent 能改什么、什么冻结、和谁对照。试跑 3 天内跑什么；成功和失败各会看到什么。",
+      f5Ph: "冻结 Qwen2.5-7B 权重，只改工具调用流程；对照为原始 harness。试跑：……成功：……失败：……",
       f6Label: "算力",
-      f6Hint: "用 GPU 卡时估算即可。",
+      f6Hint: "RTX 5090 卡时。试跑上限 24，完整上限 200。",
       f6Trial: "试跑（卡时）",
       f6Full: "完整（卡时）",
       f7Label: "你是谁",
@@ -120,8 +145,9 @@
       verdictLabels: { pass: "通过", revise: "需修改", reject: "未通过" },
       valueLabels: { high: "高", medium: "中", low: "低" },
       reviewOf: (stage) => (stage === "result" ? "成果评审" : "申请评审"),
-      gatePass: "通过",
-      gateFail: "需改",
+      gatePass: "Pass",
+      gateFail: "Fail",
+      rp: { summary: "提案复述", evidence: "证据核查", gates: "硬门槛", compute: "算力估算", quality: "质量评审", decision: "结论", value: "价值" },
 
       sending: "提交中……",
       okSent: "已提交，进入评审队列。",
@@ -146,37 +172,61 @@
       },
 
       ledgerLabel: "公开账本",
-      ledgerTitle: "所有申请都记在这里",
-      ledgerIntro: "账本只记编号、方向和状态，不公开申请内容和个人信息。",
-      footLeft: "TOKEN-IGNITION // 算力资助 // v3",
+      ledgerTitle: "评审记录",
+      ledgerIntro: "每份申请的编号、方向和评审状态都公开记录在 GitHub 上，申请内容和个人信息不公开。",
+      footLeft: "TOKEN-IGNITION // RSI 算力资助 // v4",
       footRight: "RESEARCH HOST: JOULE RESEARCH",
     },
 
     en: {
-      brand: "TOKEN-IGNITION // COMPUTE GRANTS",
-      heroSubtitle: "We provide the GPUs. You do research on AI that improves itself.",
-      heroFacts: ["Free GPUs once you pass review", "Directions are a frame, you pick the problem", "About 15 minutes to apply, reviewed item by item by AI"],
+      brand: "TOKEN-IGNITION // RSI COMPUTE GRANTS",
+      heroLead: "Compute grants for RSI research. You bring the idea and the baseline; we bring the GPUs.",
+      heroDef: "RSI (recursive self-improvement): AI research agents improving AI systems themselves, from evaluation and harnesses to training and the research loop.",
+      heroStats: (L, gpu) => [
+        ["RTX 5090", gpu.en.replace(/^RTX 5090 /, "")],
+        [`${L.trial_gpu_hours_max} GPU-h`, `trial · results in ${L.trial_days} days`],
+        [`${L.full_gpu_hours_max} GPU-h`, `full · delivered in ${L.full_days / 7} weeks`],
+        ["~15 min", "to apply · structured AI review"],
+      ],
       heroCTA: "↓ apply for compute",
       heroCTA2: "see directions",
 
       dirLabel: "directions",
-      dirTitle: "Directions we fund now",
-      dirIntro: "Pick your own problem inside this frame. The examples are only hints.",
+      dirTitle: "Five areas of RSI research",
+      dirIntro: "Your baseline becomes the exam: start from a public, reproducible result and show, with a program-computed metric, that you beat it. No GPUs of your own needed.",
+      pathsTitle: "Two ways in",
+      paths: [
+        ["A · Bring a project you helped build", "A fully open project you co-built. You know its open questions and its reward-hacking risks better than anyone."],
+        ["B · Start from a well-known project", "Pick an influential open project close to your expertise and design an RSI task around one of its experiments."],
+      ],
 
       flowLabel: "flow",
-      flowTitle: "From application to GPUs",
+      flowTitle: "Five steps, short cycles",
       flowItems: [
-        ["Apply", "Sign in with GitHub and fill 7 short fields."],
-        ["AI review", "Each item is marked pass or needs changes, with how to fix it. Revise in place, up to 3 times."],
-        ["Trial", "Once passed, we send a container account with quota to the contact you left."],
-        ["Results", "A public repo, one run log, and numbers against the baseline."],
-        ["Full quota", "Pass the second review and get compute for your full plan. Standout work gets long-term compute and an invitation to the research group."],
+        ["Apply", "Sign in with GitHub and fill 7 fields, about 15 minutes."],
+        ["AI review", "Evidence check, 7 hard gates and a quality review, usually within 24 hours. Revise in place, up to 3 times."],
+        ["Trial", "Pass and get an RTX 5090 container account; run the smallest experiment within 3 days."],
+        ["Results", "A public repo, the record of one complete run, and numbers against the baseline."],
+        ["Full quota", "Pass the results review and get compute for the full plan, delivered within 2 weeks."],
       ],
-      tierKeys: ["gate.1 trial", "gate.2 full", "gate.3 research"],
+      tierKeys: ["T1 · trial", "T2 · full", "T3 · research group"],
 
       reviewLabel: "review",
-      reviewTitle: "What the AI reviewer checks",
-      reviewIntro: "Each item comes back with one line of evidence and one line on how to fix it, shown in your application status.",
+      reviewTitle: "Structured review",
+      reviewIntro: "Every application gets a review report in a fixed format, with evidence and a fix for each item, shown in your application status.",
+      reportOutline: [
+        ["Proposal summary", "One paragraph restating what you want to test, to confirm we read it the same way."],
+        ["Evidence", "Your public work, the baseline repository and version, related work."],
+        ["Hard gates", "Seven, each Pass / Fail with evidence and a fix. Any Fail means revise."],
+        ["Compute note", "GPU-hours estimated from your plan; does the trial fit the quota."],
+        ["Quality review", "Frontier relevance, scientific value, iteration practicality, statistical interpretation."],
+        ["Decision", "Pass / Revise / Reject."],
+      ],
+      gatesTitle: "Seven hard gates",
+      failTitle: "Common reasons for Fail",
+      sampleTitle: "Sample report",
+      sampleIntro: "The full report one sample application received. The application is fictional.",
+      sampleSummary: "show sample report",
 
       applyLabel: "apply",
       applyTitle: "Apply for compute",
@@ -191,17 +241,18 @@
       helperIntro: "Paste this into ChatGPT, Claude or any assistant you use, answer its questions, then copy the result into the form.",
       helperCopy: "copy prompt",
       helperCopied: "copied",
-      helperPrompt: (dirs) => `You are my research application assistant. I am applying for free GPUs from Token Ignition to do research on AI that improves itself.
+      helperPrompt: (dirs) => `You are my RSI research application assistant. I am applying for GPUs (RTX 5090) from Token Ignition for recursive self-improvement (RSI) research.
 Directions: ${dirs}.
-Ask me one question at a time and turn my idea into these 7 items, one or two sentences each, then print them in order:
+Ask me one question at a time and turn my idea into these 7 items, then print them in order:
 1. Direction: pick one from the list
 2. Research question: one sentence on what I want to test
-3. Baseline: which public project, model or result I start from, with link and version
-4. Evaluation: which metric on which data; it must be computable by a program
-5. Two-week plan: what I will do; what success looks like, what failure looks like
-6. Compute: GPU hours for a trial run and for the full plan
+3. Baseline: public repo link + pinned commit or version + a reported number
+4. Metric and integrity: which data, which metric, computed by which program; how the test set is isolated; whether the agent could forge the score
+5. Experiment design: what the agent may change, what stays frozen, what it is compared against; what the 3-day trial runs; what success and failure look like
+6. Compute: trial GPU-hours (max 24) and full GPU-hours (max 200)
 7. Portfolio: one link to a paper, repo or competition result
-If my baseline is not public or my metric cannot be computed by a program, tell me and help me fix it.`,
+The review checks: RSI scope, applicant fit, traceable baseline, question and metric, action space, evaluation integrity, compute and timeline.
+If any item would fail, tell me and help me fix it.`,
 
       f1Label: "direction",
       f1Hint: "Pick the closest one.",
@@ -211,14 +262,14 @@ If my baseline is not public or my metric cannot be computed by a program, tell 
       f3Label: "baseline",
       f3Hint: "Which public project, model or result you start from. Link and version.",
       f3Ph: "e.g. https://github.com/... @ commit abc123, paper reports 41.0%",
-      f4Label: "evaluation",
-      f4Hint: "Which metric on which data. It must be computable by a program.",
-      f4Ph: "e.g. pass rate on a held-out split of the public test set, graded by script.",
-      f5Label: "two-week plan",
-      f5Hint: "What you will do; what success looks like, what failure looks like.",
-      f5Ph: "Week 1 reproduce the baseline... Week 2 ... Success: ... Failure: ...",
+      f4Label: "metric and integrity",
+      f4Hint: "Which data, which metric, computed by which program. How the test set is isolated; whether the agent could forge the score.",
+      f4Ph: "e.g. pass@1 on a 100-task held-out split; the scorer runs separately from candidate code; the test set is hidden from the agent until scoring.",
+      f5Label: "experiment design",
+      f5Hint: "What the agent may change, what stays frozen, what it is compared against. What the 3-day trial runs; what success and failure look like.",
+      f5Ph: "Frozen Qwen2.5-7B weights; only the tool-calling flow changes; control is the original harness. Trial: ... Success: ... Failure: ...",
       f6Label: "compute",
-      f6Hint: "A rough estimate in GPU hours is fine.",
+      f6Hint: "RTX 5090 GPU-hours. Trial max 24, full max 200.",
       f6Trial: "trial (GPU hours)",
       f6Full: "full (GPU hours)",
       f7Label: "about you",
@@ -263,8 +314,9 @@ If my baseline is not public or my metric cannot be computed by a program, tell 
       verdictLabels: { pass: "pass", revise: "needs changes", reject: "not passed" },
       valueLabels: { high: "high", medium: "medium", low: "low" },
       reviewOf: (stage) => (stage === "result" ? "results review" : "application review"),
-      gatePass: "pass",
-      gateFail: "fix",
+      gatePass: "Pass",
+      gateFail: "Fail",
+      rp: { summary: "Proposal summary", evidence: "Evidence reviewed", gates: "Hard gates", compute: "Compute note", quality: "Quality review", decision: "Decision", value: "value" },
 
       sending: "submitting...",
       okSent: "Submitted. You are in the review queue.",
@@ -289,9 +341,9 @@ If my baseline is not public or my metric cannot be computed by a program, tell 
       },
 
       ledgerLabel: "public ledger",
-      ledgerTitle: "Every application is recorded here",
-      ledgerIntro: "The ledger keeps only the id, direction and status. Application text and personal data are never published.",
-      footLeft: "TOKEN-IGNITION // COMPUTE GRANTS // v3",
+      ledgerTitle: "Review record",
+      ledgerIntro: "The id, direction and review status of every application are recorded publicly on GitHub. Application text and personal data are never published.",
+      footLeft: "TOKEN-IGNITION // RSI COMPUTE GRANTS // v4",
       footRight: "RESEARCH HOST: JOULE RESEARCH",
     },
   };
@@ -314,6 +366,7 @@ If my baseline is not public or my metric cannot be computed by a program, tell 
   }
 
   let PROGRAM = null;
+  let SAMPLE = null; // sample review report shown in the review section
   let AUTH = { loaded: false, configured: false, user: null };
   let APP = null; // current user's application record
 
@@ -351,12 +404,18 @@ If my baseline is not public or my metric cannot be computed by a program, tell 
       b.setAttribute("aria-current", b.getAttribute("data-lang") === LANG ? "true" : "false");
     });
 
-    $("hero-facts").innerHTML = t.heroFacts.map((f) => `<li>${escapeHtml(f)}</li>`).join("");
+    $("paths").innerHTML = t.paths
+      .map(([k, v]) => `<div class="path"><div class="path-k">${escapeHtml(k)}</div><p>${escapeHtml(v)}</p></div>`).join("");
+    $("report-outline").innerHTML = t.reportOutline
+      .map(([k, v], i) => `<li><span class="flow-step">${String(i + 1).padStart(2, "0")}</span><span class="flow-k">${escapeHtml(k)}</span><span class="flow-v">${escapeHtml(v)}</span></li>`).join("");
     $("flow-list").innerHTML = t.flowItems
       .map(([k, v], i) => `<li><span class="flow-step">${String(i + 1).padStart(2, "0")}</span><span class="flow-k">${escapeHtml(k)}</span><span class="flow-v">${escapeHtml(v)}</span></li>`)
       .join("");
 
     if (PROGRAM) {
+      $("hero-stats").innerHTML = t.heroStats(PROGRAM.limits, PROGRAM.gpu)
+        .map(([k, v]) => `<div class="stat"><div class="stat-k">${escapeHtml(k)}</div><div class="stat-v">${escapeHtml(v)}</div></div>`).join("");
+      $("fail-list").innerHTML = PROGRAM.review.common_failures[LANG].map((x) => `<li>${escapeHtml(x)}</li>`).join("");
       $("dir-grid").innerHTML = activeDirections().map((d) => {
         const c = d[LANG];
         const ex = (c.examples || []).map((e) => `<li>${escapeHtml(e)}</li>`).join("");
@@ -371,8 +430,9 @@ If my baseline is not public or my metric cannot be computed by a program, tell 
         </div>`).join("");
 
       $("gate-list").innerHTML = PROGRAM.review_gates
-        .map((g, i) => `<li><span class="k">${String(i + 1).padStart(2, "0")}</span><span class="v">${escapeHtml(g[LANG])}</span></li>`)
+        .map((g, i) => `<li><span class="flow-step">${String(i + 1).padStart(2, "0")}</span><span class="flow-k">${escapeHtml(g[LANG])}</span><span class="flow-v">${escapeHtml(g["desc_" + LANG])}</span></li>`)
         .join("");
+      if (SAMPLE) $("sample-report").innerHTML = reportHtml(SAMPLE[LANG]);
 
       const sel = $("f-direction");
       const current = sel.value;
@@ -442,28 +502,7 @@ If my baseline is not public or my metric cannot be computed by a program, tell 
       ? next(leftRevisions(s === "result_revise" ? APP.result_revisions : APP.revisions))
       : next;
     const reviews = (APP.reviews || []).slice().reverse();
-    const gateName = (id) => {
-      const g = PROGRAM && PROGRAM.review_gates.find((x) => x.id === id);
-      return g ? g[LANG] : id;
-    };
-    const reviewHtml = reviews.map((r) => `
-      <div class="review-block">
-        <div class="review-head">
-          <span>${escapeHtml(t.reviewOf(r.stage))}</span>
-          <span class="verdict ${escapeHtml(r.verdict)}">${escapeHtml(t.verdictLabels[r.verdict] || r.verdict)}</span>
-        </div>
-        ${r.summary ? `<p class="review-summary">${escapeHtml(r.summary)}</p>` : ""}
-        <table class="gate-table">
-          <tbody>
-            ${(r.gates || []).map((g) => `
-              <tr class="${g.status === "pass" ? "ok" : "bad"}">
-                <td class="g-name">${escapeHtml(gateName(g.id))}</td>
-                <td class="g-status">${g.status === "pass" ? t.gatePass : t.gateFail}</td>
-                <td class="g-text">${escapeHtml(g.evidence)}${g.status !== "pass" && g.fix ? `<div class="g-fix">→ ${escapeHtml(g.fix)}</div>` : ""}</td>
-              </tr>`).join("")}
-          </tbody>
-        </table>
-      </div>`).join("");
+    const reviewHtml = reviews.map(reportHtml).join("");
 
     panel.hidden = false;
     panel.innerHTML = `
@@ -483,6 +522,40 @@ If my baseline is not public or my metric cannot be computed by a program, tell 
     const canResult = s === "pass" || (s === "result_revise" && leftRevisions(APP.result_revisions) > 0);
     resultForm.hidden = !canResult;
     if (canResult && APP.result) fillResult(APP.result);
+  }
+
+  function labelOf(list, id) {
+    const x = PROGRAM && (list || []).find((g) => g.id === id);
+    return x ? x[LANG] : id;
+  }
+
+  // One review report: summary, evidence, hard gates, compute, quality, decision.
+  // Reviews written before v4 only have summary + gates and render the same way.
+  function reportHtml(r) {
+    const t = I18N[LANG];
+    const R = (PROGRAM && PROGRAM.review) || {};
+    const row = (name, body) => `<tr><td class="g-name">${escapeHtml(name)}</td><td class="g-text" colspan="2">${escapeHtml(body)}</td></tr>`;
+    const block = (title, inner) => `<div class="rp-block"><div class="rp-title">${escapeHtml(title)}</div>${inner}</div>`;
+    const gates = (r.gates || []).map((g) => `
+      <tr class="${g.status === "pass" ? "ok" : "bad"}">
+        <td class="g-name">${escapeHtml(labelOf(PROGRAM && PROGRAM.review_gates, g.id))}</td>
+        <td class="g-status">${g.status === "pass" ? t.gatePass : t.gateFail}</td>
+        <td class="g-text">${escapeHtml(g.evidence)}${g.status !== "pass" && g.fix ? `<div class="g-fix">→ ${escapeHtml(g.fix)}</div>` : ""}</td>
+      </tr>`).join("");
+    const verdict = `<span class="verdict ${escapeHtml(r.verdict)}">${escapeHtml(t.verdictLabels[r.verdict] || r.verdict)}</span>`;
+    return `
+      <div class="review-block">
+        <div class="review-head">
+          <span>${escapeHtml(t.reviewOf(r.stage))}${r.at ? " · " + new Date(r.at * 1000).toISOString().slice(0, 10) : ""}</span>
+          ${verdict}
+        </div>
+        ${r.summary ? block(t.rp.summary, `<p class="review-summary">${escapeHtml(r.summary)}</p>`) : ""}
+        ${(r.evidence || []).length ? block(t.rp.evidence, `<table class="gate-table"><tbody>${r.evidence.map((e) => row(labelOf(R.evidence, e.id), e.finding)).join("")}</tbody></table>`) : ""}
+        ${block(t.rp.gates, `<table class="gate-table"><tbody>${gates}</tbody></table>`)}
+        ${r.compute_note ? block(t.rp.compute, `<p class="review-summary">${escapeHtml(r.compute_note)}</p>`) : ""}
+        ${(r.quality || []).length ? block(t.rp.quality, `<table class="gate-table"><tbody>${r.quality.map((q) => row(labelOf(R.quality, q.id), q.note)).join("")}</tbody></table>`) : ""}
+        ${block(t.rp.decision, `<p class="review-summary">${verdict}${r.value ? ` · ${escapeHtml(t.rp.value)} ${escapeHtml(t.valueLabels[r.value] || r.value)}` : ""}</p>`)}
+      </div>`;
   }
 
   function fillProposal(p) {
@@ -516,6 +589,7 @@ If my baseline is not public or my metric cannot be computed by a program, tell 
     try {
       const resp = await fetch("/config/program.json", { cache: "no-store" });
       PROGRAM = await resp.json();
+      SAMPLE = await fetch("/config/sample-review.json", { cache: "no-store" }).then((r) => r.json()).catch(() => null);
     } catch (err) {
       console.error("[program]", err);
     }
